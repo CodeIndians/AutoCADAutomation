@@ -1,3 +1,16 @@
+
+/* Copyright (C) 2022 - CodeIndian Technologies  - All Rights Reserved
+ * No part of this file should be copied, distributed or modified without
+ * Proper appovals from the owner(s)
+ */
+
+ /* -----------------------Revision History------------------------------------------
+ *
+ * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ * 
+ * 11-Sep-2022	SatishD		- Added Skeleton implementations for new commands
+ */
+
 #include "AutomationToolkit.h"
 
 
@@ -135,4 +148,225 @@ void AutomationToolkit::CollectPanelInformation(bool dimensions)
 
 	//clear collection data when the panels are filled in the current diagram
 	CollectionHelper::ClearCollectionData(); 
+}
+
+/// <summary>
+/// 
+/// Method : PanelDataLabels
+/// Author :
+/// Purpose : This method is used to collect labels from Data area of a Panel
+///
+/// </summary>
+
+void AutomationToolkit::PanelDataLabels()
+{
+
+	try
+	{
+
+	}
+	catch (...)
+	{
+		acutPrintf(L"PanelDatalabels Command failed");
+	}
+
+}
+
+/// <summary>
+/// 
+/// Method : IdentifySimilarRigging
+/// Author :
+/// Purpose : This method is used to identify similar rigging based on geometry
+///
+/// </summary>
+
+void AutomationToolkit::IdentifySimilarRigging()
+{
+
+	try
+	{
+
+	}
+	catch (...)
+	{
+		acutPrintf(L"IdentifySimilarRigging Command failed");
+	}
+
+}
+
+/// <summary>
+/// 
+/// Method : PanelStrength
+/// Author :
+/// Purpose : This method is used to identify if the bottom leg of panel is less than 60% of the total width
+///
+/// </summary>
+
+void AutomationToolkit::PanelStrength()
+{
+
+	try
+	{
+
+	}
+	catch (...)
+	{
+		acutPrintf(L"PanelStrength Command failed");
+	}
+
+}
+
+/// <summary>
+/// 
+/// Method : LiftAndEgdeNotes
+/// Author :
+/// Purpose : This method is used to add notes with a leader lines
+///
+/// </summary>
+
+void AutomationToolkit::LiftAndEgdeNotes()
+{
+
+	try
+	{
+
+	}
+	catch (...)
+	{
+		acutPrintf(L"LiftAndEgdeNotes Command failed");
+	}
+
+}
+
+/// <summary>
+/// 
+/// Method : LiftInsDimRoundOff
+/// Author :
+/// Purpose : This method is used to add identify panels that have Lift Insert dimensions not being rounded off.
+///
+/// </summary>
+
+void AutomationToolkit::LiftInsDimRoundOff()
+{
+
+	try
+	{
+
+	}
+	catch (...)
+	{
+		acutPrintf(L"LiftInsDimRoundOff Command failed");
+	}
+
+}
+
+/// <summary>
+/// 
+/// Method : LiftInsClearance
+/// Author :
+/// Purpose : This method is used to detect if the distance between teh lift insert and opening as per the user entered valuers
+///
+/// </summary>
+
+void AutomationToolkit::LiftInsClearance()
+{
+
+	try
+	{
+
+	}
+	catch (...)
+	{
+		acutPrintf(L"LiftInsClearance Command failed");
+	}
+
+}
+
+/// <summary>
+/// 
+/// Method : BraceInsClearance
+/// Author :
+/// Purpose : This method is used to detect if the distance between teh brace insert and opening as per the user entered valuers
+///
+/// </summary>
+
+void AutomationToolkit::BraceInsClearance()
+{
+
+	try
+	{
+
+	}
+	catch (...)
+	{
+		acutPrintf(L"BraceInsClearance Command failed");
+	}
+
+}
+
+/// <summary>
+/// 
+/// Method : RebarLabels
+/// Author :
+/// Purpose : This method is used to validate Rebar label and place appropriate deadman notes 
+/// 
+/// </summary>
+
+void AutomationToolkit::RebarLabelsDeadmanNotes()
+{
+
+	try
+	{
+
+	}
+	catch (...)
+	{
+		acutPrintf(L"RebarLabels Command failed");
+	}
+
+}
+
+
+/// <summary>
+/// 
+/// Method : RevealPostions
+/// Author :
+/// Purpose : This method is used to enter the reveal position information in the position infoirmation csv
+/// 
+/// </summary>
+
+void AutomationToolkit::RevealPostions()
+{
+
+	try
+	{
+
+	}
+	catch (...)
+	{
+		acutPrintf(L"RevealPostions Command failed");
+	}
+
+}
+
+/// <summary>
+/// 
+/// Method : InsertsDistFromReveals
+/// Author :
+/// Purpose : This method is used to validate the distance between revels and lift and brace inserts is greater than 9"
+/// 
+/// </summary>
+
+void AutomationToolkit::InsertsDistFromReveals()
+{
+
+	try
+	{
+
+	}
+	catch (...)
+	{
+		acutPrintf(L"InsertsDistFromReveals Command failed");
+	}
+
 }
