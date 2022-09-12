@@ -6,6 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ *  
+ * 11-Sep-2022	SatishD		- Added Skeleton implementations for new commands
  */
 
 #pragma once
@@ -23,6 +25,20 @@ public:
 	static void InterferenceCheck();
 	static void RebarLabelsCheck();
 	static void DimensionsReconnect();
+
+	//Phase-2 Methods - START
+	static void PanelDataLabels();
+	static void IdentifySimilarRigging();
+	static void PanelStrength();
+	static void LiftAndEgdeNotes();
+	static void LiftInsDimRoundOff();
+	static void LiftInsClearance();
+	static void BraceInsClearance();
+	static void RebarLabelsDeadmanNotes();
+	static void RevealPostions();
+	static void InsertsDistFromReveals();
+	//Phase-2 Methods - END
+
 	static void CollectPanelInformation( bool dimensions = false);
 	static std::list<Panel> vecPanels;
 };
