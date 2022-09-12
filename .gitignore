@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/AutoCADAutomation/.vs/AutoCADAutomation
+/AutoCADAutomation/x64/Debug
+/AutoCADAutomation/AutoCADAutomation/x64/Debug
+/AutoCADAutomation/x64/Release
+/AutoCADAutomation/AutoCADAutomation/x64/Release

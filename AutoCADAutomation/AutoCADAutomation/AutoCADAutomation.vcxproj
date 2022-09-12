@@ -73,13 +73,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.arx</TargetExt>
-    <IncludePath>C:\Autodesk\ObjectARX_for_AutoCAD_2021_Win_64bit_dlm\inc-x64;C:\Autodesk\ObjectARX_for_AutoCAD_2021_Win_64bit_dlm\inc;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Autodesk\ObjectARX_for_AutoCAD_2021_Win_64bit_dlm\lib-x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Dependencies\inc\;..\Dependencies\inc-x64\;$(IncludePath)</IncludePath>
+    <LibraryPath>..\Dependencies\lib-x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.arx</TargetExt>
-    <IncludePath>C:\Autodesk\ObjectARX_for_AutoCAD_2021_Win_64bit_dlm\inc-x64;C:\Autodesk\ObjectARX_for_AutoCAD_2021_Win_64bit_dlm\inc;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Autodesk\ObjectARX_for_AutoCAD_2021_Win_64bit_dlm\lib-x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\Dependencies\inc-x64;..\Dependencies\inc;$(IncludePath)</IncludePath>
+    <LibraryPath>..\Dependencies\lib-x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -115,13 +115,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ProgramDataBaseFileName>$(TEMP)vc$(PlatformToolsetVersion).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>acad.lib;acui24.lib;adui24.lib;acdb24.lib;acge24.lib;acgiapi.lib;acISMobj24.lib;rxapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>C:\Autodesk\ObjectARX_for_AutoCAD_2021_Win_64bit_dlm\inc\AcRxDefault.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\Dependencies\inc\AcRxDefault.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -141,7 +142,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>acad.lib;acui24.lib;adui24.lib;acdb24.lib;acge24.lib;acgiapi.lib;acISMobj24.lib;rxapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <ModuleDefinitionFile>C:\Autodesk\ObjectARX_for_AutoCAD_2021_Win_64bit_dlm\inc\AcRxDefault.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>..\Dependencies\inc\AcRxDefault.def</ModuleDefinitionFile>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
