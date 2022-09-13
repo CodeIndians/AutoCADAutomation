@@ -11,7 +11,10 @@
 #pragma once
 #include "../Panel.h"
 #include <fstream>
+#include <filesystem>
+
 using std::ofstream;
+namespace fs = std::filesystem;
 
 class ReportingBase
 {
@@ -42,6 +45,9 @@ public :
 	}
 	ReportingBase()
 	{
+		if (!fs::is_directory(fileLocation) || !fs::exists(fileLocation)) { // Check if AutoCADReports folder exists
+			fs::create_directory(fileLocation); // create AutoCADReports folder
+		}
 		std::wstring name = curDoc()->fileName();
 		std::string str(name.begin(), name.end());
 		str = str.substr(str.find_last_of("\\") + 1);
