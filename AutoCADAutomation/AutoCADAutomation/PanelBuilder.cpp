@@ -50,7 +50,7 @@ void PanelBuilder::buildOpenings(std::list<BOUNDS>& openings, std::list<COORDINA
 	}
 }
 
-void PanelBuilder::buildLabels(std::list<LABELTEXT> textLabels)
+void PanelBuilder::buildLabels(std::list<LABELTEXT>& textLabels)
 {
 	// collect panel Name
 	for (auto& textLabel : textLabels)
@@ -80,9 +80,19 @@ void PanelBuilder::buildLabels(std::list<LABELTEXT> textLabels)
 		}
 	}
 	ptrPanel->updatePanelThickness();
+	ptrPanel->generatePanelDetailsMap();
 }
 
-void PanelBuilder::buildInternalPanel(std::list<BOUNDS> internalPanels, std::list<COORDINATES> internalPanelLines)
+void PanelBuilder::buildDeadManLabels(std::list<BOUNDS>& deadManLabels)
+{
+	for (auto& deadManLabel : deadManLabels)
+	{
+		if (ptrPanel->isElementWithinPanel(deadManLabel))
+			ptrPanel->addDeadmanLabels(deadManLabel);
+	}
+}
+
+void PanelBuilder::buildInternalPanel(std::list<BOUNDS>& internalPanels, std::list<COORDINATES>& internalPanelLines)
 {
 	// collect internal panel Bounds
 	for (auto& internalPanelBound : internalPanels)

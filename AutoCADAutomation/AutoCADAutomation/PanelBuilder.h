@@ -20,8 +20,9 @@ public:
 	void buildLiftInserts(std::list<CIRCLE>& liftInserts);
 	void buildBraceInserts(std::list<COORDINATES>& braceInserts);
 	void buildOpenings(std::list<BOUNDS>& openings, std::list<COORDINATES> futureTextCordinates);
-	void buildLabels(std::list<LABELTEXT> textLabels);
-	void buildInternalPanel(std::list<BOUNDS> internalPanels, std::list<COORDINATES> internalPanelLines);
+	void buildLabels(std::list<LABELTEXT>& textLabels);
+	void buildDeadManLabels(std::list<BOUNDS>& deadManLabels);
+	void buildInternalPanel(std::list<BOUNDS>& internalPanels, std::list<COORDINATES> &internalPanelLines);
 	void updatePanel();
 
 	//dimensions

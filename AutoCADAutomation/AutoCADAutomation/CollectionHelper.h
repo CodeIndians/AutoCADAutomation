@@ -19,8 +19,9 @@ private:
 	static std::list<BOUNDS> vecOpenings; // valid openings
 	static std::list<COORDINATES> vecFutureOpenings; // text position "FUTURE"
 	static std::list<LABELTEXT> vecTextLabels;	// text labels with text and coordinates
+	static std::list<BOUNDS> vecDeadManLabels; // deadman leader labels
 	static std::list<BOUNDS> vecInternalPanels; // internal panel rectangles
-	static std::list<COORDINATES> vecInternalPanelLines; // intenal panel lines
+	static std::list<COORDINATES> vecInternalPanelLines; // internal panel lines
 
 	//Dimensions 
 	static std::list<BOUNDS> vecHorDimOpeningPlaceHolders;
@@ -40,7 +41,8 @@ private:
 	static void CollectLinesWithAnAngle(AcDbEntity* entity, std::list<BOUNDS>& lineBounds); // acute angle lines
 	static void CollectLinesWithAnAngle(AcDbEntity* entity, std::list<BOUNDS>& acuteLines, std::list<BOUNDS>& obtuseLines);
 	static void CollectTextCordinates(AcDbEntity* entity, std::list<COORDINATES>& textCoordinates, bool isFuture = false);
-	static void CollectTextLabels(AcDbEntity* entity, std::list<LABELTEXT>& textLabels);
+	static void CollectTextLabels(AcDbEntity* entity, std::list<LABELTEXT>& listtextLabels);
+	static void CollectTextLabelsFromLeaders(AcDbEntity* entity, std::list<BOUNDS>& listLeaderBounds);
 	static void CreatePanelsFromBlockReferences(AcDbEntity* entity, std::list<Panel>& panels);
 public:
 	static void CollectLiftInserts(AcDbEntity* entity);

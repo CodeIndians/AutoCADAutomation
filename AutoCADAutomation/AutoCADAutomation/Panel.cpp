@@ -146,6 +146,38 @@ void Panel::updatePanelThickness()
 	}
 }
 
+void Panel::generatePanelDetailsMap()
+{
+	std::string key;
+	std::string value;
+	std::string validateString = ":";
+	
+	// push detail labels into map 
+	// For example
+	//	TOTAL THICKNESS is the key
+	//	8" is the value 
+	for (auto& detailLabel : vecDetailLabels)
+	{
+		auto pos = detailLabel.first.find(validateString);
+		if (detailLabel.first.find(validateString) != std::string::npos)
+		{
+			key = detailLabel.first.substr(0, pos);
+			value = detailLabel.first.substr(pos);
+			panelDetailsMap[key] = value;
+		}
+	}
+	for (auto& detailLabel : vecPanelLabels)
+	{
+		auto pos = detailLabel.first.find(validateString);
+		if (detailLabel.first.find(validateString) != std::string::npos)
+		{
+			key = detailLabel.first.substr(0, pos);
+			value = detailLabel.first.substr(pos);
+			panelDetailsMap[key] = value;
+		}
+	}
+}
+
 void Panel::createDimensions(std::vector<BOUNDS>& horizontalBounds, std::vector<BOUNDS>& verticalBounds, AcString layer)
 {
 	if (horizontalBounds.size() == 0 && verticalBounds.size() == 0)
@@ -448,6 +480,11 @@ void Panel::addRebarLabels(LABELTEXT& rebarLabels, bool inside)
 		vecRebarLabelsOutsideInternalPanel.push_back(rebarLabels);
 }
 
+void Panel::addDeadmanLabels(BOUNDS& deadmanLabels)
+{
+	vecDeadmanLabels.push_back(deadmanLabels);
+}
+
 void Panel::addInternalPanelBounds(BOUNDS& internalPanelBounds)
 {
 	mInternalPanelBounds = internalPanelBounds;
@@ -528,6 +565,20 @@ std::string Panel::getOpeningType(BOUNDS& bound)
 		}
 	}
 	return isFuture ? "K.O." : "OP";
+}
+
+bool Panel::isOutsideDeadmanLabelPresent()
+{
+	if (vecDeadmanLabels.size() > 3)
+		acutPrintf(L"Deadman labels logic needs to be changed");
+	return (vecDeadmanLabels.size() == 1) || (vecDeadmanLabels.size() == 3);
+}
+
+bool Panel::isInsideDeadmanLabelPresent()
+{
+	if (vecDeadmanLabels.size() > 3)
+		acutPrintf(L"Deadman labels logic needs to be changed");
+	return (vecDeadmanLabels.size() == 2) || (vecDeadmanLabels.size() == 3);
 }
 
 BOUNDS& Panel::getPanelNameBounds()

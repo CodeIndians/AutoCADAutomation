@@ -68,6 +68,7 @@ public:
 	std::vector<LABELTEXT> vecRebarLabelsInsideInternalPanel;
 	std::vector<LABELTEXT> vecRebarLabelsOutsideInternalPanel;
 	std::vector<LABELTEXT> vecPanelLabels;
+	std::vector<BOUNDS> vecDeadmanLabels;
 	std::vector<LABELTEXT> vecDetailLabels;
 	std::vector< COORDINATES> vecInteralPanelLines;
 
@@ -81,6 +82,9 @@ public:
 	std::vector<BOUNDS> vecPanelDimHorPoints;
 	std::vector<BOUNDS> vecPanelDimVerPoints;
 
+	//panel detauls map
+	std::map<std::string, std::string> panelDetailsMap;
+
 	explicit Panel(BOUNDS boundInfo);
 
 	// Panel add methods
@@ -91,6 +95,7 @@ public:
 	void addPanelLabels(LABELTEXT& panelLabels);
 	void addDetailLabels(LABELTEXT& detailLabels);
 	void addRebarLabels(LABELTEXT& panelLabels, bool inside);
+	void addDeadmanLabels(BOUNDS& deadmanLabels);
 	void addInternalPanelBounds(BOUNDS& internalPanelBounds);
 	void addInternalPanelLines(COORDINATES& internalPanelLines);
 
@@ -107,6 +112,8 @@ public:
 	bool isInterferenceDetected();
 	bool areRebarTextsMatching();
 	std::string getOpeningType(BOUNDS& bound); // should be used only for openings
+	bool isOutsideDeadmanLabelPresent();
+	bool isInsideDeadmanLabelPresent();
 
 	//Get functions
 	BOUNDS& getPanelNameBounds();
@@ -127,6 +134,7 @@ public:
 	//panel update functions
 	void updatePanel();
 	void updatePanelThickness();
+	void generatePanelDetailsMap();
 
 	//TODO : move dimensions logic into a different class
 	//void create dimensions
