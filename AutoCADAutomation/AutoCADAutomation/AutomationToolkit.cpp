@@ -7,8 +7,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
- * 
- * 11-Sep-2022	SatishD		- Added Skeleton implementations for new commands
+ * 11-Sep-2022	SatishD		    - Added Skeleton implementations for new commands
+ * 13-Sep-2022	Slanka		    - ABA-6: Round off lifting insert to 1”
  */
 
 #include "AutomationToolkit.h"
@@ -135,6 +135,7 @@ void AutomationToolkit::CollectPanelInformation(bool dimensions)
 			CollectionHelper::CollectBraceDimensions(pEnt);
 			CollectionHelper::CollectLiftDimensions(pEnt);
 			CollectionHelper::CollectPanelDimensions(pEnt);
+			CollectionHelper::CollectAllTextLabels(pEnt);
 		}
 		pEnt->close();
 	}
@@ -242,7 +243,7 @@ void AutomationToolkit::LiftAndEgdeNotes()
 /// 
 /// Method : LiftInsDimRoundOff
 /// Author :
-/// Purpose : This method is used to add identify panels that have Lift Insert dimensions not being rounded off.
+/// Purpose : This method is used to identify panels that have Lift Insert dimensions not being rounded off.
 ///
 /// </summary>
 
@@ -251,7 +252,12 @@ void AutomationToolkit::LiftInsDimRoundOff()
 
 	try
 	{
+		CollectPanelInformation(true);
 
+		// print data
+		ReportingBase* report = new ReportingUnroundedLiftInserts(vecPanels);
+		report->ReportData();
+		delete report;
 	}
 	catch (...)
 	{

@@ -6,6 +6,7 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ * 13-Sep-2022	Slanka	        - ABA-6: Round off lifting insert to 1”
  */
 
 #pragma once
@@ -40,7 +41,8 @@ public :
 		PrintHeader();
 		for (auto& panel : mPanels)
 		{
-			PrintData(panel);
+			if(panel.getPanelName() != "Default Panel")
+				PrintData(panel);
 		}
 	}
 	ReportingBase()

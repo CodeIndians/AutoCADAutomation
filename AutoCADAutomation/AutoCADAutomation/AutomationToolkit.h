@@ -6,8 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
- *  
- * 11-Sep-2022	SatishD		- Added Skeleton implementations for new commands
+ * 11-Sep-2022	SatishD		    - Added Skeleton implementations for new commands
+ * 13-Sep-2022	Slanka		    - ABA-6: Round off lifting insert to 1”
  */
 
 #pragma once
@@ -16,6 +16,7 @@
 #include "Reporting/ReportingExcel.h"
 #include "Reporting/ReportingInterference.h"
 #include "Reporting/ReportingRebar.h"
+#include "Reporting/ReportingUnroundedLiftInserts.h"
 
 class AutomationToolkit
 {
