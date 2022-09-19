@@ -29,6 +29,9 @@ std::list<BOUNDS> CollectionHelper::vecVerDimLiftPlaceHolders;
 std::list<BOUNDS> CollectionHelper::vecHorDimPanelPlaceHolders;
 std::list<BOUNDS> CollectionHelper::vecVerDimPanelPlaceHolders;
 
+//Dimensions after reconnect
+std::list<AcDbRotatedDimension*> CollectionHelper::vecHorDimLiftPlaceHoldersAfterReconnect;
+std::list<AcDbRotatedDimension*> CollectionHelper::vecVerDimLiftPlaceHoldersAfterReconnect;
 
 void CollectionHelper::CollectCircles(AcDbEntity* entity, std::list<COORDINATES>& circles)
 {
@@ -349,6 +352,42 @@ void CollectionHelper::CollectLiftDimensions(AcDbEntity* entity)
 	}
 }
 
+void CollectionHelper::CollectLiftDimensionsAfterReconnect(AcDbEntity* entity)
+{
+	if (wcscmp(entity->layer(), L"LIFT_INSERT_DIMENSIONS") == 0)
+	{
+		if ((wcscmp(entity->isA()->name(), L"AcDbDimension") == 0))
+			CollectLinesWithAnAngle(entity, vecHorDimLiftPlaceHolders, vecVerDimLiftPlaceHolders);
+		if (wcscmp(entity->isA()->name(), L"AcDbRotatedDimension"))
+		{
+			if (wcscmp(entity->isA()->name(), L"AcDbText") == 0)
+			{
+				AcDbText* text = (AcDbText*)entity;
+				if (text)
+				{
+					if (wcscmp(text->textString(), L"(LIFT INSERTS)"))
+						entity->erase();
+				}
+			}
+			else
+				entity->erase(); // remove the dimensions after collecting them
+		}
+		else
+		{
+			AcDbRotatedDimension* dim = (AcDbRotatedDimension*)entity;
+			AcGePoint3d start = dim->xLine1Point();
+			AcGePoint3d end = dim->xLine2Point();
+			AcGePoint3d dimLine = dim->dimLinePoint();
+			double rotation = dim->rotation();
+
+			if (rotation == 0)
+				vecHorDimLiftPlaceHoldersAfterReconnect.push_back(dim);
+			else
+				vecVerDimLiftPlaceHoldersAfterReconnect.push_back(dim);
+		}
+	}
+}
+
 void CollectionHelper::CollectPanelDimensions(AcDbEntity* entity)
 {
 	if (wcscmp(entity->layer(), L"PANEL_DIMENSIONS") == 0)
@@ -391,6 +430,8 @@ void CollectionHelper::PopulatePanelData(std::list<Panel>& panels)
 		panelBuilder.buildLiftDimensions(vecHorDimLiftPlaceHolders, vecVerDimLiftPlaceHolders);
 		panelBuilder.buildPanelDimensions(vecHorDimPanelPlaceHolders, vecVerDimPanelPlaceHolders);
 
+		// dimensions after reconnect
+		panelBuilder.buildLiftDimensionsAfterReconnect(vecHorDimLiftPlaceHoldersAfterReconnect, vecVerDimLiftPlaceHoldersAfterReconnect);
 
 		panelBuilder.updatePanel();
 		panelBuilder.buildLabels(vecTextLabels);

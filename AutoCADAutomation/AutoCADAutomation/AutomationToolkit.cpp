@@ -134,6 +134,7 @@ void AutomationToolkit::CollectPanelInformation(bool dimensions)
 			CollectionHelper::CollectOpeningDimensions(pEnt);
 			CollectionHelper::CollectBraceDimensions(pEnt);
 			CollectionHelper::CollectLiftDimensions(pEnt);
+			CollectionHelper::CollectLiftDimensionsAfterReconnect(pEnt);
 			CollectionHelper::CollectPanelDimensions(pEnt);
 			CollectionHelper::CollectAllTextLabels(pEnt);
 		}

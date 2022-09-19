@@ -27,6 +27,7 @@ protected:
 	void PrintData(Panel& panel);
 	void PrintLine(ExcelSchema& excelObject);
 	void UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel& panel);
+	void UpdateExcelDataFromPanelAfterReconnect(ExcelSchema& excelObject, Panel& panel);
 public:
 	explicit ReportingUnroundedLiftInserts(std::list<Panel>& vecPanels);
 	~ReportingUnroundedLiftInserts();

@@ -24,7 +24,11 @@ void ReportingUnroundedLiftInserts::PrintHeader()
 void ReportingUnroundedLiftInserts::PrintData(Panel& panel)
 {
 	ExcelSchema dataObject;
-	UpdateExcelDataFromPanel(dataObject, panel);
+	if(panel.vecLiftDimHorPoints.size() == 0)
+		UpdateExcelDataFromPanelAfterReconnect(dataObject, panel);
+	else
+		UpdateExcelDataFromPanel(dataObject, panel);
+
 	PrintLine(dataObject);
 }
 
@@ -33,6 +37,104 @@ void ReportingUnroundedLiftInserts::PrintLine(ExcelSchema& excelObject)
 	csvfile << excelObject.name << delim;
 	csvfile << excelObject.status << delim;
 	csvfile << std::endl;
+}
+
+void ReportingUnroundedLiftInserts::UpdateExcelDataFromPanelAfterReconnect(ExcelSchema& excelObject, Panel& panel)
+{
+	COORDINATES midPoint1, midPoint2, diffPoint;
+	std::string diffInFeet;
+	std::vector<COORDINATES> tmpvecLiftDimHorPoints;
+
+	try
+	{
+		excelObject.name = panel.getPanelName();
+
+		COORDINATES elem1, elem2;
+		BOUNDS boundElem;
+
+		// Collect all the midpoints of the angled lines from vecLiftDimHorPoints list
+		std::vector<COORDINATES> midPoints;
+		std::vector<double> midPointYs;
+		std::vector<COORDINATES> dimLines;
+
+		for (int dim = 0; dim < panel.vecLiftDimHorPointsAfterReconnect.size(); dim++)
+		{
+			elem1 = std::make_pair(panel.vecLiftDimHorPointsAfterReconnect[dim]->xLine1Point().x, panel.vecLiftDimHorPointsAfterReconnect[dim]->xLine1Point().y);
+			elem2 = std::make_pair(panel.vecLiftDimHorPointsAfterReconnect[dim]->dimLinePoint().x, panel.vecLiftDimHorPointsAfterReconnect[dim]->dimLinePoint().y);
+			midPoints.push_back(elem1);
+			midPointYs.push_back(elem1.second);
+		}
+
+		if (midPoints.size() == 0 || midPoints.size() == 1 || midPointYs.size() == 0 || midPointYs.size() == 1)
+		{
+			excelObject.status = "Good";
+			return;
+		}
+
+		// Sort all the mid-points based on the X coordinates in ascending order
+		std::sort(midPoints.begin(), midPoints.end());
+
+		// Now extract all the Ys and sort them in descending order
+		std::sort(midPointYs.rbegin(), midPointYs.rend());
+
+		// Now get the two COORDINATES which has the largest Y coordinates and smallest X coordinates
+		int firstPairIndex = -1, secondPairIndex = -1;
+		for (int x = 0; x < midPoints.size(); x++)
+		{
+			if (firstPairIndex != -1 && secondPairIndex != -1)
+				break;
+
+			if (midPoints[x].second == midPointYs[0])
+			{
+				if (firstPairIndex == -1)
+				{
+					firstPairIndex = x;
+					continue;
+				}
+
+				if (firstPairIndex != -1 && secondPairIndex == -1)
+				{
+					secondPairIndex = x;
+					continue;
+				}
+			}
+			else if (midPoints[x].second == midPointYs[1])
+			{
+				if (firstPairIndex == -1)
+				{
+					firstPairIndex = x;
+					continue;
+				}
+
+				if (firstPairIndex != -1 && secondPairIndex == -1)
+				{
+					secondPairIndex = x;
+					continue;
+				}
+			}
+		}
+
+		double valInches = 0.00f;
+		for (int dim = 0; dim < panel.vecLiftDimHorPointsAfterReconnect.size(); dim++)
+		{
+			if (midPoints[firstPairIndex].first == panel.vecLiftDimHorPointsAfterReconnect[dim]->xLine1Point().x &&
+				midPoints[firstPairIndex].second == panel.vecLiftDimHorPointsAfterReconnect[dim]->xLine1Point().y)
+			{
+				panel.vecLiftDimHorPointsAfterReconnect[dim]->measurement(valInches);
+				break;
+			}
+		}
+
+		diffInFeet = Utilities::getUtils()->inchesToFeet(valInches);
+		if (diffInFeet.find('/') != std::string::npos)
+			excelObject.status = "Bad";
+		else
+			excelObject.status = "Good";
+	}
+	catch (...)
+	{
+		acutPrintf(L"Update of round-off lifting inserts failed");
+	}
 }
 
 void ReportingUnroundedLiftInserts::UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel& panel)
@@ -44,25 +146,62 @@ void ReportingUnroundedLiftInserts::UpdateExcelDataFromPanel(ExcelSchema& excelO
 
 	try
 	{
-		excelObject.status = "Good";
 		excelObject.name = panel.getPanelName();
-		/*for (dim1 = 0, dim2 = 1; dim2 <= panel.vecLiftDimHorPoints.size() - 1; dim1++, dim2++)
-		{*/
-			if (panel.vecLiftDimHorPoints.size() != 0 && panel.vecLiftDimHorPoints.size() != 1)
+
+		// Collect all the midpoints of the angled lines from vecLiftDimHorPoints list
+		std::vector<COORDINATES> midPoints;
+		std::vector<double> midPointYs;
+
+		for (int line = 0; line < panel.vecLiftDimHorPoints.size(); line++)
+		{
+			midPoints.push_back(Utilities::getUtils()->getMidPoint(panel.vecLiftDimHorPoints[line]));
+			midPointYs.push_back(Utilities::getUtils()->getMidPoint(panel.vecLiftDimHorPoints[line]).second);
+		}
+
+		if (midPoints.size() == 0 || midPoints.size() == 1 || midPointYs.size() == 0 || midPointYs.size() == 1)
+		{
+			excelObject.status = "Good";
+			return;
+		}
+
+		// Sort all the mid-points based on the X coordinates in ascending order
+		std::sort(midPoints.begin(), midPoints.end());
+
+		// Now extract all the Ys and sort them in descending order
+		std::sort(midPointYs.rbegin(), midPointYs.rend());
+
+		// Now get the two COORDINATES which has the largest Y coordinates and smallest X coordinates
+		int firstPairIndex = -1, secondPairIndex = -1;
+		for (int x = 0; x < midPoints.size(); x++)
+		{
+			if (firstPairIndex != -1 && secondPairIndex != -1)
+				break;
+
+			if (midPoints[x].second == midPointYs[0])
 			{
-				midPoint1 = Utilities::getUtils()->getMidPoint(panel.vecLiftDimHorPoints[dim1]);
-				midPoint2 = Utilities::getUtils()->getMidPoint(panel.vecLiftDimHorPoints[dim2]);
-				diffPoint.first = midPoint2.first - midPoint1.first;
-				diffPoint.second = midPoint2.second - midPoint1.second;
-				diffInFeet = Utilities::getUtils()->inchesToFeet(diffPoint.first);
-				if (diffInFeet.find('/') != std::string::npos)
+				if (firstPairIndex == -1)
 				{
-					fractionalLiftInsertDims.push_back(diffInFeet);
-					excelObject.status = "Bad";
-					/*break;*/
+					firstPairIndex = x;
+					continue;
+				}
+				
+				if (firstPairIndex != -1 && secondPairIndex == -1)
+				{
+					secondPairIndex = x;
+					continue;
 				}
 			}
-		/*}*/
+		}
+
+		// Now, calculate the distance between these 2 pairs and check if it is a fractional value
+		diffPoint.first = midPoints[secondPairIndex].first - midPoints[firstPairIndex].first;
+		diffPoint.second = midPoints[secondPairIndex].second - midPoints[firstPairIndex].second;
+
+		diffInFeet = Utilities::getUtils()->inchesToFeet(diffPoint.first);
+		if (diffInFeet.find('/') != std::string::npos)
+			excelObject.status = "Bad";
+		else
+			excelObject.status = "Good";
 	}
 	catch (...)
 	{

@@ -151,6 +151,22 @@ void PanelBuilder::buildLiftDimensions(std::list<BOUNDS> horizantalBounds, std::
 	}
 }
 
+void PanelBuilder::buildLiftDimensionsAfterReconnect(std::list<AcDbRotatedDimension*> horizantalDims, std::list<AcDbRotatedDimension*> verticalDims)
+{
+	// collect horizontal bounds
+	for (auto& horizontalDim : horizantalDims)
+	{
+		if (ptrPanel->isElementWithinPanel(horizontalDim))
+			ptrPanel->addLiftDimensionsAfterReconnect(horizontalDim, true);
+	}
+	// collect vertical bounds
+	for (auto& verticalDim : verticalDims)
+	{
+		if (ptrPanel->isElementWithinPanel(verticalDim))
+			ptrPanel->addLiftDimensionsAfterReconnect(verticalDim, false);
+	}
+}
+
 void PanelBuilder::buildPanelDimensions(std::list<BOUNDS> horizantalBounds, std::list<BOUNDS> verticalBounds)
 {// collect horizontal bounds
 	for (auto& horizontalBound : horizantalBounds)
