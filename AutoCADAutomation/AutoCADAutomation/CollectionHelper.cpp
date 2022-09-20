@@ -356,23 +356,7 @@ void CollectionHelper::CollectLiftDimensionsAfterReconnect(AcDbEntity* entity)
 {
 	if (wcscmp(entity->layer(), L"LIFT_INSERT_DIMENSIONS") == 0)
 	{
-		if ((wcscmp(entity->isA()->name(), L"AcDbDimension") == 0))
-			CollectLinesWithAnAngle(entity, vecHorDimLiftPlaceHolders, vecVerDimLiftPlaceHolders);
-		if (wcscmp(entity->isA()->name(), L"AcDbRotatedDimension"))
-		{
-			if (wcscmp(entity->isA()->name(), L"AcDbText") == 0)
-			{
-				AcDbText* text = (AcDbText*)entity;
-				if (text)
-				{
-					if (wcscmp(text->textString(), L"(LIFT INSERTS)"))
-						entity->erase();
-				}
-			}
-			else
-				entity->erase(); // remove the dimensions after collecting them
-		}
-		else
+		if (wcscmp(entity->isA()->name(), L"AcDbRotatedDimension") == 0)
 		{
 			AcDbRotatedDimension* dim = (AcDbRotatedDimension*)entity;
 			AcGePoint3d start = dim->xLine1Point();
