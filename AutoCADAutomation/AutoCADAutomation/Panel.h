@@ -6,6 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ *  * 
+ * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
  */
 
 #pragma once
@@ -38,6 +40,7 @@ private:
 	double panelFFYPosition;
 	bool bHasInterferenceInInserts;
 	COORDINATES mOrigin;
+	CIRCLE m_CG;
 
 	// bounds calculation functions
 	void calculatePanelNameBounds();
@@ -126,6 +129,9 @@ public:
 	double getPanelHeightBelowFF();
 	double getPanelHeightAboveFF();
 	std::string getRiggingType();
+	BOUNDS getInternalPanelBounds();
+	CIRCLE GetCG();
+
 
 	//set functions
 	void setPanelName(std::string name);

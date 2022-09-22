@@ -6,6 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ * 
+ * 22-Sep-2022 Satish D - Panels having 7 Brace Inserts
  */
 
 #pragma once
@@ -24,14 +26,14 @@ private:
 		std::string openings[6];
 		std::string riggingType;
 		std::string liftInserts[16];
-		std::string braceInserts[5];
+		std::string braceInserts[7];
 		ExcelSchema() : name(""), panelWidth(""), panelHeight(",,"), thickness(""), riggingType("")
 		{
 			for (int i = 0; i < 6; i++)
 				openings[i] = ",,,,";
 			for (int i = 0; i < 16; i++)
 				liftInserts[i] = ",";
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 7; i++)
 				braceInserts[i] = ",";
 		}
 	};

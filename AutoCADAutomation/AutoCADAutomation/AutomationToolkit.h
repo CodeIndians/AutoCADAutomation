@@ -8,6 +8,7 @@
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
  * 11-Sep-2022	SatishD		    - Added Skeleton implementations for new commands
  * 13-Sep-2022	Slanka		    - ABA-6: Round off lifting insert to 1”
+ * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
  */
 
 #pragma once
@@ -17,6 +18,7 @@
 #include "Reporting/ReportingInterference.h"
 #include "Reporting/ReportingRebar.h"
 #include "Reporting/ReportingUnroundedLiftInserts.h"
+#include "Reporting/ReportingPanelStrength.h"
 
 class AutomationToolkit
 {
