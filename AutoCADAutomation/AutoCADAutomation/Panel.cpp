@@ -6,6 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ *  * 
+ * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
  */
 
 #include "Panel.h"
@@ -25,6 +27,11 @@ Panel::Panel(BOUNDS boundinfo)
 	panelName = "Default Panel";
 	totalThickness = "O inches";
 	bHasInterferenceInInserts = false;
+
+	mInternalPanelBounds.first.first = 0.0;
+	mInternalPanelBounds.second.first = 0.0;
+	mInternalPanelBounds.first.second = 0.0;
+	mInternalPanelBounds.second.second = 0.0;
 }
 
 void Panel::addLiftInsert(CIRCLE &liftInsert)
@@ -45,6 +52,11 @@ void Panel::addOpening(BOUNDS& opening)
 BOUNDS Panel::getPanelBounds()
 {
 	return bounds;
+}
+
+BOUNDS Panel::getInternalPanelBounds()
+{
+	return mInternalPanelBounds;
 }
 
 std::string& Panel::getPanelThickNess()
@@ -234,19 +246,18 @@ void Panel::filterCGLiftOpening()
 		if (vecLiftInserts[1].second > radius)
 			radius = vecLiftInserts[1].second;
 	}
-	CIRCLE cgCircle;
 	bool foundCgCircle = false;
 	for (auto& liftInsert : vecLiftInserts)
 	{
 		if (liftInsert.second < radius)
 		{
 			foundCgCircle = true;
-			cgCircle = liftInsert;
+			m_CG = liftInsert;
 			break;
 		}
 	}
 	if(foundCgCircle)
-		vecLiftInserts.erase(std::remove(vecLiftInserts.begin(), vecLiftInserts.end(), cgCircle));
+		vecLiftInserts.erase(std::remove(vecLiftInserts.begin(), vecLiftInserts.end(), m_CG));
 }
 
 void Panel::createDimension(std::vector<COORDINATES>& singleLine,AcString layer, bool isHorizontal)
@@ -463,6 +474,9 @@ void Panel::addRebarLabels(LABELTEXT& rebarLabels, bool inside)
 
 void Panel::addInternalPanelBounds(BOUNDS& internalPanelBounds)
 {
+	if (Utilities::getUtils()->DistanceBetweenPoints(mInternalPanelBounds) > Utilities::getUtils()->DistanceBetweenPoints(internalPanelBounds))
+		return;
+
 	mInternalPanelBounds = internalPanelBounds;
 	internalPanelYOffset = mInternalPanelBounds.second.second;
 }
@@ -554,6 +568,11 @@ std::string Panel::getOpeningType(BOUNDS& bound)
 BOUNDS& Panel::getPanelNameBounds()
 {
 	return mPanelNameBounds;
+}
+
+CIRCLE Panel::GetCG()
+{
+	return m_CG;
 }
 
 BOUNDS& Panel::getDetailLableBounds()

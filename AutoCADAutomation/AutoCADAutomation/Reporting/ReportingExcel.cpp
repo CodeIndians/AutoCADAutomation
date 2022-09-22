@@ -7,6 +7,8 @@
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
  * 
+ * 22-Sep-2022 Satish D - Panels having 7 Brace Inserts
+ * 
  */
 
 #include "ReportingExcel.h"
@@ -29,7 +31,7 @@ void ReportingExcel::InitializeHeader()
 		std::string lift = "Lift Insert ( L" + num + " )";
 		headerObject.liftInserts[i] = lift + "X Loc" + delim +lift + "Y Loc";
 	}
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 7; i++)
 	{
 		std::string num = std::to_string(i + 1);
 		std::string brace = "Brace Insert ( B" + num + " )";
@@ -64,7 +66,7 @@ void ReportingExcel::PrintLine(ExcelSchema& excelObject)
 	{
 		csvfile << excelObject.liftInserts[i] << delim;
 	}
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 7; i++)
 	{
 		csvfile << excelObject.braceInserts[i];
 		if (i < 4)

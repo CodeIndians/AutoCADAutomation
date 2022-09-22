@@ -6,6 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ *  * 
+ * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
  */
 
 #include "Utilities.h"
@@ -95,7 +97,13 @@ std::string Utilities::inchesToFeet(double value)
 	return std::to_string(feet) + "' " + std::to_string(inches) + fraction + "\"";
 }
 
-bool Utilities::approximatelyEqual(float a, float b, float epsilon)
+bool Utilities::approximatelyEqual(float a, float b, float epsilon )
 {
 	return fabs(a - b) <= ((fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
+}
+
+double Utilities::DistanceBetweenPoints(BOUNDS& bound)
+{
+	return sqrt(pow((bound.first.first - bound.second.first), 2) + pow((bound.first.second - bound.second.second), 2));
+
 }

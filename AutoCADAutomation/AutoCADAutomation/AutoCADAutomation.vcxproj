@@ -136,6 +136,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,6 +158,7 @@
     <ClCompile Include="Reporting/ReportingExcel.cpp" />
     <ClCompile Include="Reporting/ReportingInterference.cpp" />
     <ClCompile Include="Reporting/ReportingRebar.cpp" />
+    <ClCompile Include="Reporting\ReportingPanelStrength.cpp" />
     <ClCompile Include="Reporting\ReportingUnroundedLiftInserts.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
@@ -170,6 +172,7 @@
     <ClInclude Include="Reporting/ReportingExcel.h" />
     <ClInclude Include="Reporting/ReportingInterference.h" />
     <ClInclude Include="Reporting/ReportingRebar.h" />
+    <ClInclude Include="Reporting\ReportingPanelStrength.h" />
     <ClInclude Include="Reporting\ReportingUnroundedLiftInserts.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
