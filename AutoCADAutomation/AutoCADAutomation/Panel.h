@@ -81,6 +81,9 @@ public:
 	std::vector<BOUNDS> vecPanelDimHorPoints;
 	std::vector<BOUNDS> vecPanelDimVerPoints;
 
+	std::vector<AcDbRotatedDimension*> vecLiftDimHorPointsAfterReconnect;
+	std::vector<AcDbRotatedDimension*> vecLiftDimVerPointsAfterReconnect;
+
 	explicit Panel(BOUNDS boundInfo);
 
 	// Panel add methods
@@ -100,10 +103,13 @@ public:
 	void addLiftDimensions(BOUNDS& dimensions, bool isHorizontal);
 	void addPanelDimensions(BOUNDS& dimensions, bool isHorizontal);
 
+	void addLiftDimensionsAfterReconnect(AcDbRotatedDimension* dimensions, bool isHorizontal);
+
 	//Utility functions
 	bool isElementWithinPanel(COORDINATES& element);
 	bool isElementWithinPanel(BOUNDS& element);
 	bool isElementWithinPanel(CIRCLE& circle);
+	bool isElementWithinPanel(AcDbRotatedDimension* dim);
 	bool isInterferenceDetected();
 	bool areRebarTextsMatching();
 	std::string getOpeningType(BOUNDS& bound); // should be used only for openings

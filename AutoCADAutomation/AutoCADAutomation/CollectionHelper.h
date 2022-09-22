@@ -31,6 +31,9 @@ private:
 	static std::list<BOUNDS> vecVerDimLiftPlaceHolders;
 	static std::list<BOUNDS> vecHorDimPanelPlaceHolders;
 	static std::list<BOUNDS> vecVerDimPanelPlaceHolders;
+
+	static std::list<AcDbRotatedDimension*> vecHorDimLiftPlaceHoldersAfterReconnect;
+	static std::list<AcDbRotatedDimension*> vecVerDimLiftPlaceHoldersAfterReconnect;
 	
 	static void CollectCircles(AcDbEntity* entity, std::list<COORDINATES>& circles);
 	static void CollectCircles(AcDbEntity* entity, std::list<CIRCLE>& circles);
@@ -55,6 +58,7 @@ public:
 	static void CollectBraceDimensions(AcDbEntity* entity);
 	static void CollectLiftDimensions(AcDbEntity* entity);
 	static void CollectPanelDimensions(AcDbEntity* entity);
+	static void CollectLiftDimensionsAfterReconnect(AcDbEntity* entity);
 
 	static void PopulatePanelData(std::list<Panel>& panels);
 	static void ClearCollectionData();

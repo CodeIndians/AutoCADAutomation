@@ -100,6 +100,18 @@ bool Panel::isElementWithinPanel(CIRCLE& circle)
 	return isElementWithinPanel(circle.first);
 }
 
+bool Panel::isElementWithinPanel(AcDbRotatedDimension* dim)
+{
+	COORDINATES element1 = std::make_pair(dim->xLine1Point().x, dim->xLine1Point().y);
+	COORDINATES element2 = std::make_pair(dim->xLine2Point().x, dim->xLine2Point().y);
+	BOUNDS boundElem = std::make_pair(element1, element2);
+	
+	if (isElementWithinPanel(boundElem))
+		return true;
+	else
+		return false;
+}
+
 void Panel::addFutureTextCoordinates(COORDINATES& futuretextposition)
 {
 	vecFutureCoordinates.push_back(futuretextposition);
@@ -285,6 +297,7 @@ void Panel::createDimension(std::vector<COORDINATES>& singleLine,AcString layer,
 		AcDbRotatedDimension* pDim = new AcDbRotatedDimension(rotation, start, end, dimLine, NULL, dimStyleId);
 		pDim->setLayer(layer);
 		pBTR->appendAcDbEntity(pDim);
+
 		pDim->close();
 	}
 	pBTR->close();
@@ -481,6 +494,14 @@ void Panel::addLiftDimensions(BOUNDS& dimensions, bool isHorizontal)
 		vecLiftDimHorPoints.push_back(dimensions);
 	else
 		vecLiftDimVerPoints.push_back(dimensions);
+}
+
+void Panel::addLiftDimensionsAfterReconnect(AcDbRotatedDimension* dimensions, bool isHorizontal)
+{
+	if (isHorizontal)
+		vecLiftDimHorPointsAfterReconnect.push_back(dimensions);
+	else
+		vecLiftDimVerPointsAfterReconnect.push_back(dimensions);
 }
 
 void Panel::addPanelDimensions(BOUNDS& dimensions, bool isHorizontal)

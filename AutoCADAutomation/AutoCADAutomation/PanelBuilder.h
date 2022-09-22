@@ -30,4 +30,5 @@ public:
 	void buildLiftDimensions(std::list<BOUNDS> horizantalBounds, std::list<BOUNDS> verticalBounds);
 	void buildPanelDimensions(std::list<BOUNDS> horizantalBounds, std::list<BOUNDS> verticalBounds);
 
+	void buildLiftDimensionsAfterReconnect(std::list<AcDbRotatedDimension*> horizantalDims, std::list<AcDbRotatedDimension*> verticalDims);
 };
