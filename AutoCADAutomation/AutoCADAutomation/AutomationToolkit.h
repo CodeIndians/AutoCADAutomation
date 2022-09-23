@@ -8,7 +8,8 @@
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
  * 11-Sep-2022	SatishD		    - Added Skeleton implementations for new commands
  * 13-Sep-2022	Slanka		    - ABA-6: Round off lifting insert to 1”
- * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
+ * 22-Sep-2022	Satish D		- ABA-4 - Panel Strength
+ * 23-Sep-2022	SatishD			- ABA-7/8 - Lift Insert and brace Insert Clearance
  */
 
 #pragma once
@@ -19,6 +20,10 @@
 #include "Reporting/ReportingRebar.h"
 #include "Reporting/ReportingUnroundedLiftInserts.h"
 #include "Reporting/ReportingPanelStrength.h"
+#include "Reporting/ReportingInsertClerance.h"
+#include "InputBox.h"
+#include <string>
+
 
 class AutomationToolkit
 {
