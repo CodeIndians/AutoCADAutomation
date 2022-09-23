@@ -9,7 +9,8 @@
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
  * 11-Sep-2022	SatishD		    - Added Skeleton implementations for new commands
  * 13-Sep-2022	Slanka		    - ABA-6: Round off lifting insert to 1”
- * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
+ * 22-Sep-2022 Satish D			- ABA-4 - Panel Strength
+ * 23-Sep-2022 Satish D			- ABA-7/8 - Lift Insert and brace Insert Clearance
  */
 
 #include "AutomationToolkit.h"
@@ -287,6 +288,22 @@ void AutomationToolkit::LiftInsClearance()
 
 	try
 	{
+		CollectPanelInformation(false);
+		char title[] = "Enter distances in inches for Lift Insert Clearance validation. Default Values are \n \n Lift Insert and Panel = 24 Inches \n Lift Insert and Openings = 15 inches";
+		char propmt[] = "Lift Insert Clearance";
+		char defalut[] = "24,15";
+		char* result = InputBox(title, propmt, defalut);
+
+		std::string str(result);
+		
+		auto pos = str.find(",");
+		int j = atoi(str.substr(0, pos).c_str());
+		int i = atoi(str.substr(pos + 1 , str.size() - 1).c_str());
+
+		// print data
+		ReportingBase* report = new ReportingInsertClearance(vecPanels, "LIFT_INSERTS", j, i);
+		report->ReportData();
+		delete report;
 
 	}
 	catch (...)
@@ -300,7 +317,7 @@ void AutomationToolkit::LiftInsClearance()
 /// 
 /// Method : BraceInsClearance
 /// Author :
-/// Purpose : This method is used to detect if the distance between teh brace insert and opening as per the user entered valuers
+/// Purpose : This method is used to detect if the distance between teh brace insert and opening and panel boundary as per the user entered valuers
 ///
 /// </summary>
 
@@ -309,6 +326,23 @@ void AutomationToolkit::BraceInsClearance()
 
 	try
 	{
+		CollectPanelInformation(false);
+
+		char title[] = "Enter distances in inches for Brace Insert Clearance validation. \n \n  Default Values are \n Brace Insert and Panel = 24 Inches \n Brace Insert and Openings = 15 inches";
+		char propmt[] = "Brace Insert Clearance";
+		char defalut[] = "24,15";
+		char* result = InputBox(title, propmt, defalut);
+
+		std::string str(result);
+
+		auto pos = str.find(",");
+		int j = atoi(str.substr(0, pos).c_str());
+		int i = atoi(str.substr(pos + 1, str.size() - 1).c_str());
+
+		// print data
+		ReportingBase* report = new ReportingInsertClearance(vecPanels, "BRACE_INSERTS" , j , i);
+		report->ReportData();
+		delete report;
 
 	}
 	catch (...)

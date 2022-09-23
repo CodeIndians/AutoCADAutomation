@@ -158,6 +158,7 @@
     <ClCompile Include="Reporting/ReportingExcel.cpp" />
     <ClCompile Include="Reporting/ReportingInterference.cpp" />
     <ClCompile Include="Reporting/ReportingRebar.cpp" />
+    <ClCompile Include="Reporting\ReportingInsertClearance.cpp" />
     <ClCompile Include="Reporting\ReportingPanelStrength.cpp" />
     <ClCompile Include="Reporting\ReportingUnroundedLiftInserts.cpp" />
     <ClCompile Include="Utilities.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Reporting/ReportingExcel.h" />
     <ClInclude Include="Reporting/ReportingInterference.h" />
     <ClInclude Include="Reporting/ReportingRebar.h" />
+    <ClInclude Include="Reporting\ReportingInsertClerance.h" />
     <ClInclude Include="Reporting\ReportingPanelStrength.h" />
     <ClInclude Include="Reporting\ReportingUnroundedLiftInserts.h" />
     <ClInclude Include="Utilities.h" />
