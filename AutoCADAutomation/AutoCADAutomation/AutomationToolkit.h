@@ -16,6 +16,7 @@
 #include "Reporting/ReportingExcel.h"
 #include "Reporting/ReportingInterference.h"
 #include "Reporting/ReportingRebar.h"
+#include "Reporting/ReportingPanelData.h"
 
 class AutomationToolkit
 {

@@ -77,15 +77,16 @@ std::string Panel::getRiggingType()
 	return riggingType;
 }
 
+std::string Panel::getPanelParameter(std::string key)
+{
+	if (panelDetailsMap.find(key) != panelDetailsMap.end())
+		return panelDetailsMap[key];
+	return "NA";
+}
+
 bool Panel::isElementWithinPanel(COORDINATES &element)
 {
 	return Utilities::getUtils()->boundCheck(bounds, element);
-	//auto elementX = element.first;
-	//auto elementY = element.second;
-	//if (bounds.first.first <= elementX && bounds.second.first >= elementX)   // x coordinate check
-	//	if (bounds.first.second <= elementY && bounds.second.second >= elementY) // y coordinate check
-	//		return true;
-	//return false;
 }
 
 bool Panel::isElementWithinPanel(BOUNDS& element)
@@ -117,12 +118,10 @@ void Panel::updatePanel()
 	createDimensions(vecBraceDimHorPoints, vecBraceDimVerPoints, L"BRACE_INSERT_DIMENSIONS");
 	createDimensions(vecLiftDimHorPoints, vecLiftDimVerPoints, L"LIFT_INSERT_DIMENSIONS");
 	createDimensions(vecPanelDimHorPoints, vecPanelDimVerPoints, L"PANEL_DIMENSIONS");
-
 }
 
 void Panel::seperateFutureOpenings()
 {
-	std::vector<int> removeIndexes;
 	for (auto& future : vecFutureCoordinates)
 	{
 		for (auto& opening : vecOpenings)
@@ -162,7 +161,7 @@ void Panel::generatePanelDetailsMap()
 		if (detailLabel.first.find(validateString) != std::string::npos)
 		{
 			key = detailLabel.first.substr(0, pos);
-			value = detailLabel.first.substr(pos);
+			value = detailLabel.first.substr(pos + 1);
 			panelDetailsMap[key] = value;
 		}
 	}

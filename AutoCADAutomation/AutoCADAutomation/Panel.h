@@ -127,6 +127,7 @@ public:
 	double getPanelHeightBelowFF();
 	double getPanelHeightAboveFF();
 	std::string getRiggingType();
+	std::string getPanelParameter(std::string key);
 
 	//set functions
 	void setPanelName(std::string name);

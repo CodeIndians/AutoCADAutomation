@@ -163,6 +163,12 @@ void AutomationToolkit::PanelDataLabels()
 
 	try
 	{
+		CollectPanelInformation();
+
+		// print data
+		ReportingBase* report = new ReportingPanelData(vecPanels);
+		report->ReportData();
+		delete report;
 
 	}
 	catch (...)

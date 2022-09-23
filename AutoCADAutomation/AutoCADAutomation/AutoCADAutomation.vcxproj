@@ -157,6 +157,7 @@
     <ClCompile Include="Reporting/ReportingExcel.cpp" />
     <ClCompile Include="Reporting/ReportingInterference.cpp" />
     <ClCompile Include="Reporting/ReportingRebar.cpp" />
+    <ClCompile Include="Reporting/ReportingPanelData.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +170,7 @@
     <ClInclude Include="Reporting/ReportingExcel.h" />
     <ClInclude Include="Reporting/ReportingInterference.h" />
     <ClInclude Include="Reporting/ReportingRebar.h" />
+    <ClInclude Include="Reporting/ReportingPanelData.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
