@@ -54,7 +54,6 @@ void ReportingUnroundedLiftInserts::UpdateExcelDataFromPanelAfterReconnect(Excel
 
 		// Collect all the midpoints of the angled lines from vecLiftDimHorPoints list
 		std::vector<COORDINATES> midPoints;
-		std::vector<double> midPointYs;
 		std::vector<COORDINATES> dimLines;
 
 		for (int dim = 0; dim < panel.vecLiftDimHorPointsAfterReconnect.size(); dim++)
@@ -62,10 +61,9 @@ void ReportingUnroundedLiftInserts::UpdateExcelDataFromPanelAfterReconnect(Excel
 			elem1 = std::make_pair(panel.vecLiftDimHorPointsAfterReconnect[dim]->xLine1Point().x, panel.vecLiftDimHorPointsAfterReconnect[dim]->xLine1Point().y);
 			elem2 = std::make_pair(panel.vecLiftDimHorPointsAfterReconnect[dim]->dimLinePoint().x, panel.vecLiftDimHorPointsAfterReconnect[dim]->dimLinePoint().y);
 			midPoints.push_back(elem1);
-			midPointYs.push_back(elem1.second);
 		}
 
-		if (midPoints.size() == 0 || midPoints.size() == 1 || midPointYs.size() == 0 || midPointYs.size() == 1)
+		if (midPoints.size() == 0 || midPoints.size() == 1)
 		{
 			excelObject.status = "Good";
 			return;
@@ -74,57 +72,19 @@ void ReportingUnroundedLiftInserts::UpdateExcelDataFromPanelAfterReconnect(Excel
 		// Sort all the mid-points based on the X coordinates in ascending order
 		std::sort(midPoints.begin(), midPoints.end());
 
-		// Now extract all the Ys and sort them in descending order
-		std::sort(midPointYs.rbegin(), midPointYs.rend());
-
-		// Now get the two COORDINATES which has the largest Y coordinates and smallest X coordinates
-		int firstPairIndex = -1, secondPairIndex = -1;
-		for (int x = 0; x < midPoints.size(); x++)
-		{
-			if (firstPairIndex != -1 && secondPairIndex != -1)
-				break;
-
-			if (midPoints[x].second == midPointYs[0])
-			{
-				if (firstPairIndex == -1)
-				{
-					firstPairIndex = x;
-					continue;
-				}
-
-				if (firstPairIndex != -1 && secondPairIndex == -1)
-				{
-					secondPairIndex = x;
-					continue;
-				}
-			}
-			else if (midPoints[x].second == midPointYs[1])
-			{
-				if (firstPairIndex == -1)
-				{
-					firstPairIndex = x;
-					continue;
-				}
-
-				if (firstPairIndex != -1 && secondPairIndex == -1)
-				{
-					secondPairIndex = x;
-					continue;
-				}
-			}
-		}
-
+		// Now get the rotated dimension along with its measurement which has the most left X coordinates
 		double valInches = 0.00f;
 		for (int dim = 0; dim < panel.vecLiftDimHorPointsAfterReconnect.size(); dim++)
 		{
-			if (midPoints[firstPairIndex].first == panel.vecLiftDimHorPointsAfterReconnect[dim]->xLine1Point().x &&
-				midPoints[firstPairIndex].second == panel.vecLiftDimHorPointsAfterReconnect[dim]->xLine1Point().y)
+			if (midPoints[0].first == panel.vecLiftDimHorPointsAfterReconnect[dim]->xLine1Point().x &&
+				midPoints[0].second == panel.vecLiftDimHorPointsAfterReconnect[dim]->xLine1Point().y)
 			{
 				panel.vecLiftDimHorPointsAfterReconnect[dim]->measurement(valInches);
 				break;
 			}
 		}
 
+		// Convert the inches into feet and mark the panel as good or bad
 		diffInFeet = Utilities::getUtils()->inchesToFeet(valInches);
 		if (diffInFeet.find('/') != std::string::npos)
 			excelObject.status = "Bad";
