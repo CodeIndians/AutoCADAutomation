@@ -4,9 +4,8 @@
  */
 
  /* -----------------------Revision History------------------------------------------
- *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
- * 
+ * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
  * 8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
@@ -44,6 +43,7 @@ private:
 	double panelFFYPosition;
 	bool bHasInterferenceInInserts;
 	COORDINATES mOrigin;
+	CIRCLE m_CG;
 
 	// bounds calculation functions
 	void calculatePanelNameBounds();
@@ -91,6 +91,8 @@ public:
 
 	//panel detauls map
 	std::map<std::string, std::string> panelDetailsMap;
+	std::vector<AcDbRotatedDimension*> vecLiftDimHorPointsAfterReconnect;
+	std::vector<AcDbRotatedDimension*> vecLiftDimVerPointsAfterReconnect;
 
 	explicit Panel(BOUNDS boundInfo);
 
@@ -112,10 +114,13 @@ public:
 	void addLiftDimensions(BOUNDS& dimensions, bool isHorizontal);
 	void addPanelDimensions(BOUNDS& dimensions, bool isHorizontal);
 
+	void addLiftDimensionsAfterReconnect(AcDbRotatedDimension* dimensions, bool isHorizontal);
+
 	//Utility functions
 	bool isElementWithinPanel(COORDINATES& element);
 	bool isElementWithinPanel(BOUNDS& element);
 	bool isElementWithinPanel(CIRCLE& circle);
+	bool isElementWithinPanel(AcDbRotatedDimension* dim);
 	bool isInterferenceDetected();
 	bool areRebarTextsMatching();
 	std::string getOpeningType(BOUNDS& bound); // should be used only for openings
@@ -139,6 +144,8 @@ public:
 	std::string getPanelParameter(std::string key);
 	std::string& getRebarCoverExterior() { return rebarCoverExterior; }
 	std::string& getRebarCoverInterior() { return rebarCoverInterior; }
+	BOUNDS getInternalPanelBounds();
+	CIRCLE GetCG();
 
 	//set functions
 	void setPanelName(std::string name);

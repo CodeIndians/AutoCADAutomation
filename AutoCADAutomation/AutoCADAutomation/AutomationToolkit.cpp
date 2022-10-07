@@ -3,13 +3,12 @@
  * No part of this file should be copied, distributed or modified without
  * Proper appovals from the owner(s)
  */
-
  /* -----------------------Revision History------------------------------------------
- *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
- * 
  * 11-Sep-2022	SatishD		- Added Skeleton implementations for new commands
- * 
+ * 13-Sep-2022	Slanka		    - ABA-6: Round off lifting insert to 1”
+ * 22-Sep-2022 Satish D			- ABA-4 - Panel Strength
+ * 23-Sep-2022 Satish D			- ABA-7/8 - Lift Insert and brace Insert Clearance
  * 8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
@@ -138,7 +137,9 @@ void AutomationToolkit::CollectPanelInformation(bool dimensions)
 			CollectionHelper::CollectOpeningDimensions(pEnt);
 			CollectionHelper::CollectBraceDimensions(pEnt);
 			CollectionHelper::CollectLiftDimensions(pEnt);
+			CollectionHelper::CollectLiftDimensionsAfterReconnect(pEnt);
 			CollectionHelper::CollectPanelDimensions(pEnt);
+			CollectionHelper::CollectAllTextLabels(pEnt);
 		}
 		pEnt->close();
 	}
@@ -339,6 +340,12 @@ void AutomationToolkit::PanelStrength()
 
 	try
 	{
+		CollectPanelInformation(false);
+
+		// print data
+		ReportingBase* report = new ReportingPanelStrength(vecPanels);
+		report->ReportData();
+		delete report;
 
 	}
 	catch (...)
@@ -374,7 +381,7 @@ void AutomationToolkit::LiftAndEgdeNotes()
 /// 
 /// Method : LiftInsDimRoundOff
 /// Author :
-/// Purpose : This method is used to add identify panels that have Lift Insert dimensions not being rounded off.
+/// Purpose : This method is used to identify panels that have Lift Insert dimensions not being rounded off.
 ///
 /// </summary>
 
@@ -383,7 +390,12 @@ void AutomationToolkit::LiftInsDimRoundOff()
 
 	try
 	{
+		CollectPanelInformation(true);
 
+		// print data
+		ReportingBase* report = new ReportingUnroundedLiftInserts(vecPanels);
+		report->ReportData();
+		delete report;
 	}
 	catch (...)
 	{
@@ -405,6 +417,22 @@ void AutomationToolkit::LiftInsClearance()
 
 	try
 	{
+		CollectPanelInformation(false);
+		char title[] = "Enter distances in inches for Lift Insert Clearance validation. Default Values are \n \n Lift Insert and Panel = 24 Inches \n Lift Insert and Openings = 15 inches";
+		char propmt[] = "Lift Insert Clearance";
+		char defalut[] = "24,15";
+		char* result = InputBox(title, propmt, defalut);
+
+		std::string str(result);
+		
+		auto pos = str.find(",");
+		int j = atoi(str.substr(0, pos).c_str());
+		int i = atoi(str.substr(pos + 1 , str.size() - 1).c_str());
+
+		// print data
+		ReportingBase* report = new ReportingInsertClearance(vecPanels, "LIFT_INSERTS", j, i);
+		report->ReportData();
+		delete report;
 
 	}
 	catch (...)
@@ -418,7 +446,7 @@ void AutomationToolkit::LiftInsClearance()
 /// 
 /// Method : BraceInsClearance
 /// Author :
-/// Purpose : This method is used to detect if the distance between teh brace insert and opening as per the user entered valuers
+/// Purpose : This method is used to detect if the distance between teh brace insert and opening and panel boundary as per the user entered valuers
 ///
 /// </summary>
 
@@ -427,6 +455,23 @@ void AutomationToolkit::BraceInsClearance()
 
 	try
 	{
+		CollectPanelInformation(false);
+
+		char title[] = "Enter distances in inches for Brace Insert Clearance validation. \n \n  Default Values are \n Brace Insert and Panel = 24 Inches \n Brace Insert and Openings = 15 inches";
+		char propmt[] = "Brace Insert Clearance";
+		char defalut[] = "24,15";
+		char* result = InputBox(title, propmt, defalut);
+
+		std::string str(result);
+
+		auto pos = str.find(",");
+		int j = atoi(str.substr(0, pos).c_str());
+		int i = atoi(str.substr(pos + 1, str.size() - 1).c_str());
+
+		// print data
+		ReportingBase* report = new ReportingInsertClearance(vecPanels, "BRACE_INSERTS" , j , i);
+		report->ReportData();
+		delete report;
 
 	}
 	catch (...)

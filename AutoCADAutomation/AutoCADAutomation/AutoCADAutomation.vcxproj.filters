@@ -37,6 +37,15 @@
     <ClCompile Include="PanelWhitePaper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Reporting\ReportingUnroundedLiftInserts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Reporting\ReportingPanelStrength.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Reporting\ReportingInsertClearance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutomationToolkit.h">
@@ -73,6 +82,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PanelWhitePaper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Reporting\ReportingUnroundedLiftInserts.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Reporting\ReportingPanelStrength.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Reporting\ReportingInsertClerance.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
