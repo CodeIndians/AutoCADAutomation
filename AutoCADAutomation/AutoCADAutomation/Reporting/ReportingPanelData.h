@@ -4,16 +4,18 @@
  */
 
  /* -----------------------Revision History------------------------------------------
- *
- * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ * 
+ * 8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
 #pragma once
 #include "ReportingBase.h"
+#include "../PanelWhitePaper.h"
 
 class ReportingPanelData : public ReportingBase
 {
 private:
+	PanelWhitePaper mWhitePaper;
 	ofstream csvfile;
 	struct ExcelSchema
 	{
@@ -68,7 +70,7 @@ protected:
 	void PrintLine(ExcelSchema& excelObject);
 	void UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel& panel);
 public:
-	explicit ReportingPanelData(std::list<Panel>& vecPanels);
+	explicit ReportingPanelData(std::list<Panel>& vecPanels, PanelWhitePaper& whitePaperPanel);
 	~ReportingPanelData();
 };
 

@@ -6,6 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ * 
+ * 8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
 #include "PanelBuilder.h"
@@ -57,6 +59,8 @@ void PanelBuilder::buildLabels(std::list<LABELTEXT>& textLabels)
 	{
 		if (Utilities::getUtils()->boundCheck(ptrPanel->getPanelNameBounds(), textLabel.second))
 			ptrPanel->setPanelName(textLabel.first);
+		if (Utilities::getUtils()->boundCheck(ptrPanel->getNumRequiredBounds(), textLabel.second))
+			ptrPanel->setNumRequired(textLabel.first);
 
 		// collect rebar labels
 		if (ptrPanel->isElementWithinPanel(textLabel.second))
@@ -79,8 +83,11 @@ void PanelBuilder::buildLabels(std::list<LABELTEXT>& textLabels)
 			ptrPanel->addDetailLabels(textLabel);
 		}
 	}
+
+	// these update methods are called after labels are built
 	ptrPanel->updatePanelThickness();
 	ptrPanel->generatePanelDetailsMap();
+	ptrPanel->generateRebarCovers();
 }
 
 void PanelBuilder::buildDeadManLabels(std::list<BOUNDS>& deadManLabels)

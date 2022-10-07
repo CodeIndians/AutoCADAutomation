@@ -6,6 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ * 
+ * 8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
 #pragma once
@@ -29,9 +31,13 @@ class Panel
 private:
 	BOUNDS bounds;
 	BOUNDS mPanelNameBounds;
+	BOUNDS mNumRequiredBounds;
 	std::string panelName;
+	std::string numRequired;
 	std::string totalThickness;
 	std::string riggingType;
+	std::string rebarCoverExterior;
+	std::string rebarCoverInterior;
 	BOUNDS mInternalPanelBounds;
 	BOUNDS mDetailLabelsBounds;
 	double internalPanelYOffset;
@@ -42,6 +48,7 @@ private:
 	// bounds calculation functions
 	void calculatePanelNameBounds();
 	void calculateDetailLabelsBounds();
+	void calculateNumRequiredLabelBounds();
 
 	// update functions
 	void seperateFutureOpenings();
@@ -118,8 +125,10 @@ public:
 	//Get functions
 	BOUNDS& getPanelNameBounds();
 	BOUNDS& getDetailLableBounds();
+	BOUNDS& getNumRequiredBounds();
 	double getInternalPanelYOffset();
 	std::string& getPanelName();
+	std::string& getNumRequired() { return numRequired; }
 	BOUNDS getPanelBounds();
 	std::string& getPanelThickNess();
 	double getPanelWidth();
@@ -128,14 +137,18 @@ public:
 	double getPanelHeightAboveFF();
 	std::string getRiggingType();
 	std::string getPanelParameter(std::string key);
+	std::string& getRebarCoverExterior() { return rebarCoverExterior; }
+	std::string& getRebarCoverInterior() { return rebarCoverInterior; }
 
 	//set functions
 	void setPanelName(std::string name);
+	void setNumRequired(std::string numrequired);
 
 	//panel update functions
 	void updatePanel();
 	void updatePanelThickness();
 	void generatePanelDetailsMap();
+	void generateRebarCovers();
 
 	//TODO : move dimensions logic into a different class
 	//void create dimensions

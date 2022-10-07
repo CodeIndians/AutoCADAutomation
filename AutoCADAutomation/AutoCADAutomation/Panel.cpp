@@ -6,6 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ * 
+ *  8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
 #include "Panel.h"
@@ -22,9 +24,12 @@ Panel::Panel(BOUNDS boundinfo)
 	mOrigin = bounds.first;
 	calculatePanelNameBounds();
 	calculateDetailLabelsBounds();
+	calculateNumRequiredLabelBounds();
 	panelName = "Default Panel";
 	totalThickness = "O inches";
 	bHasInterferenceInInserts = false;
+	rebarCoverExterior = "";
+	rebarCoverInterior = "";
 }
 
 void Panel::addLiftInsert(CIRCLE &liftInsert)
@@ -114,6 +119,8 @@ void Panel::updatePanel()
 	updateRiggingType();
 	detectInterferenceCheck();
 	updateFFYPosition();
+
+	// dimensions
 	createDimensions(vecOpeningDimHorPoints,vecOpeningDimVerPoints, L"OPENING_DIMENSIONS");
 	createDimensions(vecBraceDimHorPoints, vecBraceDimVerPoints, L"BRACE_INSERT_DIMENSIONS");
 	createDimensions(vecLiftDimHorPoints, vecLiftDimVerPoints, L"LIFT_INSERT_DIMENSIONS");
@@ -173,6 +180,54 @@ void Panel::generatePanelDetailsMap()
 			key = detailLabel.first.substr(0, pos);
 			value = detailLabel.first.substr(pos);
 			panelDetailsMap[key] = value;
+		}
+	}
+}
+
+void Panel::generateRebarCovers()
+{
+	for (auto& rebar : vecRebarLabelsInsideInternalPanel)
+	{
+		if (rebarCoverExterior != "")
+			break;
+		auto pos1 = rebar.first.find("SPACED, ") + 8;
+		auto pos2 = rebar.first.find(" CLR");
+		if (rebar.first.find("@ BOT") != std::string::npos)
+		{
+			rebarCoverExterior = rebar.first.substr(pos1, pos2 - pos1);
+		}
+	}
+	for (auto& rebar : vecRebarLabelsInsideInternalPanel)
+	{
+		if (rebarCoverInterior != "")
+			break;
+		auto pos1 = rebar.first.find("SPACED, ") + 8;
+		auto pos2 = rebar.first.find(" CLR");
+		if (rebar.first.find("@ TOP") != std::string::npos)
+		{
+			rebarCoverInterior = rebar.first.substr(pos1, pos2 - pos1);
+		}
+	}
+	for (auto& rebar : vecRebarLabelsOutsideInternalPanel)
+	{
+		if (rebarCoverExterior != "")
+			break;
+		auto pos1 = rebar.first.find("SPACED, ") + 8;
+		auto pos2 = rebar.first.find(" CLR");
+		if (rebar.first.find("@ BOT") != std::string::npos)
+		{
+			rebarCoverExterior = rebar.first.substr(pos1, pos2 - pos1);
+		}
+	}
+	for (auto& rebar : vecRebarLabelsOutsideInternalPanel)
+	{
+		if (rebarCoverInterior != "")
+			break;
+		auto pos1 = rebar.first.find("SPACED, ") + 8;
+		auto pos2 = rebar.first.find(" CLR");
+		if (rebar.first.find("@ TOP") != std::string::npos)
+		{
+			rebarCoverInterior = rebar.first.substr(pos1, pos2 - pos1);
 		}
 	}
 }
@@ -461,6 +516,14 @@ void Panel::calculateDetailLabelsBounds()
 	mDetailLabelsBounds.second.second = bounds.first.second;
 }
 
+void Panel::calculateNumRequiredLabelBounds()
+{
+	mNumRequiredBounds.first.first = bounds.second.first - 85.0f;
+	mNumRequiredBounds.first.second = bounds.first.second - 45.0f;
+	mNumRequiredBounds.second.first = bounds.second.first;
+	mNumRequiredBounds.second.second = bounds.first.second;
+}
+
 void Panel::addPanelLabels(LABELTEXT& panelLabels)
 {
 	vecPanelLabels.push_back(panelLabels);
@@ -590,6 +653,11 @@ BOUNDS& Panel::getDetailLableBounds()
 	return mDetailLabelsBounds;
 }
 
+BOUNDS& Panel::getNumRequiredBounds()
+{
+	return mNumRequiredBounds;
+}
+
 double Panel::getInternalPanelYOffset()
 {
 	return internalPanelYOffset;
@@ -608,6 +676,11 @@ bool Panel::isInterferenceDetected()
 void Panel::setPanelName(std::string name)
 {
 	panelName = name;
+}
+
+void Panel::setNumRequired(std::string numrequired)
+{
+	numRequired = numrequired;
 }
 
 void Panel::detectInterferenceCheck()

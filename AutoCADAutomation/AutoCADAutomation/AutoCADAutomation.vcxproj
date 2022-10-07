@@ -154,6 +154,7 @@
     <ClCompile Include="InputBox.cpp" />
     <ClCompile Include="Panel.cpp" />
     <ClCompile Include="PanelBuilder.cpp" />
+    <ClCompile Include="PanelWhitePaper.cpp" />
     <ClCompile Include="Reporting/ReportingExcel.cpp" />
     <ClCompile Include="Reporting/ReportingInterference.cpp" />
     <ClCompile Include="Reporting/ReportingRebar.cpp" />
@@ -166,6 +167,7 @@
     <ClInclude Include="InputBox.h" />
     <ClInclude Include="Panel.h" />
     <ClInclude Include="PanelBuilder.h" />
+    <ClInclude Include="PanelWhitePaper.h" />
     <ClInclude Include="Reporting/ReportingBase.h" />
     <ClInclude Include="Reporting/ReportingExcel.h" />
     <ClInclude Include="Reporting/ReportingInterference.h" />

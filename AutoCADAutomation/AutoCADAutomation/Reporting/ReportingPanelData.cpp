@@ -4,9 +4,8 @@
  */
 
  /* -----------------------Revision History------------------------------------------
- *
- * 11-Sep-2022	SatishD/Raghu	- Initial Creation
- *
+ * 
+ * 8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
 #include "ReportingPanelData.h"
@@ -83,22 +82,21 @@ void ReportingPanelData::UpdateExcelDataFromPanel(ExcelSchema& excelObject, Pane
 	excelObject.braceDesignWind = panel.getPanelParameter("BRACE DESIGN WIND");
 	excelObject.liftInsert = panel.getPanelParameter("LIFT INSERT");
 	excelObject.FcReqdLift = panel.getPanelParameter("f'c REQ'D AT LIFT");
-	excelObject.noRequired = "TODO";
+	excelObject.noRequired = panel.getNumRequired();
 	excelObject.panelId = panel.getPanelName();
-	excelObject.dscJobNumber = "TODO";
-	excelObject.project = "TODO";
-	excelObject.date = "TODO";
-	excelObject.by = "TODO";
-	excelObject.chk = "TODO";
-	excelObject.rebarCoverExterior = "TODO";
-	excelObject.rebarCoverInterior = "TODO";
-
-
+	excelObject.dscJobNumber = mWhitePaper.getDscJobNo();
+	excelObject.project = mWhitePaper.getProject();
+	excelObject.date = mWhitePaper.getDate();
+	excelObject.by = mWhitePaper.getBy();
+	excelObject.chk = mWhitePaper.getChk();
+	excelObject.rebarCoverExterior = panel.getRebarCoverExterior();
+	excelObject.rebarCoverInterior = panel.getRebarCoverInterior();
 }
 
-ReportingPanelData::ReportingPanelData(std::list<Panel>& vecPanels)
+ReportingPanelData::ReportingPanelData(std::list<Panel>& vecPanels, PanelWhitePaper& whitePaperPanel)
 {
 	mPanels = vecPanels;
+	mWhitePaper = whitePaperPanel;
 	auto location = fileLocation + drawingName + "_PanelDetails_" + currentTime() + ".csv";
 	csvfile.open(location, std::ios_base::app);
 	InitializeHeader();
