@@ -6,8 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
- *  * 
  * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
+ * 8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
 #include "Panel.h"
@@ -24,10 +24,12 @@ Panel::Panel(BOUNDS boundinfo)
 	mOrigin = bounds.first;
 	calculatePanelNameBounds();
 	calculateDetailLabelsBounds();
+	calculateNumRequiredLabelBounds();
 	panelName = "Default Panel";
 	totalThickness = "O inches";
 	bHasInterferenceInInserts = false;
-
+	rebarCoverExterior = "";
+	rebarCoverInterior = "";
 	mInternalPanelBounds.first.first = 0.0;
 	mInternalPanelBounds.second.first = 0.0;
 	mInternalPanelBounds.first.second = 0.0;
@@ -89,15 +91,16 @@ std::string Panel::getRiggingType()
 	return riggingType;
 }
 
+std::string Panel::getPanelParameter(std::string key)
+{
+	if (panelDetailsMap.find(key) != panelDetailsMap.end())
+		return panelDetailsMap[key];
+	return "NA";
+}
+
 bool Panel::isElementWithinPanel(COORDINATES &element)
 {
 	return Utilities::getUtils()->boundCheck(bounds, element);
-	//auto elementX = element.first;
-	//auto elementY = element.second;
-	//if (bounds.first.first <= elementX && bounds.second.first >= elementX)   // x coordinate check
-	//	if (bounds.first.second <= elementY && bounds.second.second >= elementY) // y coordinate check
-	//		return true;
-	//return false;
 }
 
 bool Panel::isElementWithinPanel(BOUNDS& element)
@@ -137,16 +140,16 @@ void Panel::updatePanel()
 	updateRiggingType();
 	detectInterferenceCheck();
 	updateFFYPosition();
+
+	// dimensions
 	createDimensions(vecOpeningDimHorPoints,vecOpeningDimVerPoints, L"OPENING_DIMENSIONS");
 	createDimensions(vecBraceDimHorPoints, vecBraceDimVerPoints, L"BRACE_INSERT_DIMENSIONS");
 	createDimensions(vecLiftDimHorPoints, vecLiftDimVerPoints, L"LIFT_INSERT_DIMENSIONS");
 	createDimensions(vecPanelDimHorPoints, vecPanelDimVerPoints, L"PANEL_DIMENSIONS");
-
 }
 
 void Panel::seperateFutureOpenings()
 {
-	std::vector<int> removeIndexes;
 	for (auto& future : vecFutureCoordinates)
 	{
 		for (auto& opening : vecOpenings)
@@ -166,6 +169,86 @@ void Panel::updatePanelThickness()
 		if (detailLabel.first.find(validateString) != std::string::npos)
 		{
 			totalThickness = detailLabel.first.substr(pos);
+		}
+	}
+}
+
+void Panel::generatePanelDetailsMap()
+{
+	std::string key;
+	std::string value;
+	std::string validateString = ":";
+	
+	// push detail labels into map 
+	// For example
+	//	TOTAL THICKNESS is the key
+	//	8" is the value 
+	for (auto& detailLabel : vecDetailLabels)
+	{
+		auto pos = detailLabel.first.find(validateString);
+		if (detailLabel.first.find(validateString) != std::string::npos)
+		{
+			key = detailLabel.first.substr(0, pos);
+			value = detailLabel.first.substr(pos + 1);
+			panelDetailsMap[key] = value;
+		}
+	}
+	for (auto& detailLabel : vecPanelLabels)
+	{
+		auto pos = detailLabel.first.find(validateString);
+		if (detailLabel.first.find(validateString) != std::string::npos)
+		{
+			key = detailLabel.first.substr(0, pos);
+			value = detailLabel.first.substr(pos);
+			panelDetailsMap[key] = value;
+		}
+	}
+}
+
+void Panel::generateRebarCovers()
+{
+	for (auto& rebar : vecRebarLabelsInsideInternalPanel)
+	{
+		if (rebarCoverExterior != "")
+			break;
+		auto pos1 = rebar.first.find("SPACED, ") + 8;
+		auto pos2 = rebar.first.find(" CLR");
+		if (rebar.first.find("@ BOT") != std::string::npos)
+		{
+			rebarCoverExterior = rebar.first.substr(pos1, pos2 - pos1);
+		}
+	}
+	for (auto& rebar : vecRebarLabelsInsideInternalPanel)
+	{
+		if (rebarCoverInterior != "")
+			break;
+		auto pos1 = rebar.first.find("SPACED, ") + 8;
+		auto pos2 = rebar.first.find(" CLR");
+		if (rebar.first.find("@ TOP") != std::string::npos)
+		{
+			rebarCoverInterior = rebar.first.substr(pos1, pos2 - pos1);
+		}
+	}
+	for (auto& rebar : vecRebarLabelsOutsideInternalPanel)
+	{
+		if (rebarCoverExterior != "")
+			break;
+		auto pos1 = rebar.first.find("SPACED, ") + 8;
+		auto pos2 = rebar.first.find(" CLR");
+		if (rebar.first.find("@ BOT") != std::string::npos)
+		{
+			rebarCoverExterior = rebar.first.substr(pos1, pos2 - pos1);
+		}
+	}
+	for (auto& rebar : vecRebarLabelsOutsideInternalPanel)
+	{
+		if (rebarCoverInterior != "")
+			break;
+		auto pos1 = rebar.first.find("SPACED, ") + 8;
+		auto pos2 = rebar.first.find(" CLR");
+		if (rebar.first.find("@ TOP") != std::string::npos)
+		{
+			rebarCoverInterior = rebar.first.substr(pos1, pos2 - pos1);
 		}
 	}
 }
@@ -454,6 +537,14 @@ void Panel::calculateDetailLabelsBounds()
 	mDetailLabelsBounds.second.second = bounds.first.second;
 }
 
+void Panel::calculateNumRequiredLabelBounds()
+{
+	mNumRequiredBounds.first.first = bounds.second.first - 85.0f;
+	mNumRequiredBounds.first.second = bounds.first.second - 45.0f;
+	mNumRequiredBounds.second.first = bounds.second.first;
+	mNumRequiredBounds.second.second = bounds.first.second;
+}
+
 void Panel::addPanelLabels(LABELTEXT& panelLabels)
 {
 	vecPanelLabels.push_back(panelLabels);
@@ -470,6 +561,11 @@ void Panel::addRebarLabels(LABELTEXT& rebarLabels, bool inside)
 		vecRebarLabelsInsideInternalPanel.push_back(rebarLabels);
 	else
 		vecRebarLabelsOutsideInternalPanel.push_back(rebarLabels);
+}
+
+void Panel::addDeadmanLabels(BOUNDS& deadmanLabels)
+{
+	vecDeadmanLabels.push_back(deadmanLabels);
 }
 
 void Panel::addInternalPanelBounds(BOUNDS& internalPanelBounds)
@@ -565,6 +661,20 @@ std::string Panel::getOpeningType(BOUNDS& bound)
 	return isFuture ? "K.O." : "OP";
 }
 
+bool Panel::isOutsideDeadmanLabelPresent()
+{
+	if (vecDeadmanLabels.size() > 3)
+		acutPrintf(L"Deadman labels logic needs to be changed");
+	return (vecDeadmanLabels.size() == 1) || (vecDeadmanLabels.size() == 3);
+}
+
+bool Panel::isInsideDeadmanLabelPresent()
+{
+	if (vecDeadmanLabels.size() > 3)
+		acutPrintf(L"Deadman labels logic needs to be changed");
+	return (vecDeadmanLabels.size() == 2) || (vecDeadmanLabels.size() == 3);
+}
+
 BOUNDS& Panel::getPanelNameBounds()
 {
 	return mPanelNameBounds;
@@ -578,6 +688,11 @@ CIRCLE Panel::GetCG()
 BOUNDS& Panel::getDetailLableBounds()
 {
 	return mDetailLabelsBounds;
+}
+
+BOUNDS& Panel::getNumRequiredBounds()
+{
+	return mNumRequiredBounds;
 }
 
 double Panel::getInternalPanelYOffset()
@@ -598,6 +713,11 @@ bool Panel::isInterferenceDetected()
 void Panel::setPanelName(std::string name)
 {
 	panelName = name;
+}
+
+void Panel::setNumRequired(std::string numrequired)
+{
+	numRequired = numrequired;
 }
 
 void Panel::detectInterferenceCheck()

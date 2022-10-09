@@ -6,6 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ * 
+ * 8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
 #include "PanelBuilder.h"
@@ -50,13 +52,15 @@ void PanelBuilder::buildOpenings(std::list<BOUNDS>& openings, std::list<COORDINA
 	}
 }
 
-void PanelBuilder::buildLabels(std::list<LABELTEXT> textLabels)
+void PanelBuilder::buildLabels(std::list<LABELTEXT>& textLabels)
 {
 	// collect panel Name
 	for (auto& textLabel : textLabels)
 	{
 		if (Utilities::getUtils()->boundCheck(ptrPanel->getPanelNameBounds(), textLabel.second))
 			ptrPanel->setPanelName(textLabel.first);
+		if (Utilities::getUtils()->boundCheck(ptrPanel->getNumRequiredBounds(), textLabel.second))
+			ptrPanel->setNumRequired(textLabel.first);
 
 		// collect rebar labels
 		if (ptrPanel->isElementWithinPanel(textLabel.second))
@@ -79,10 +83,23 @@ void PanelBuilder::buildLabels(std::list<LABELTEXT> textLabels)
 			ptrPanel->addDetailLabels(textLabel);
 		}
 	}
+
+	// these update methods are called after labels are built
 	ptrPanel->updatePanelThickness();
+	ptrPanel->generatePanelDetailsMap();
+	ptrPanel->generateRebarCovers();
 }
 
-void PanelBuilder::buildInternalPanel(std::list<BOUNDS> internalPanels, std::list<COORDINATES> internalPanelLines)
+void PanelBuilder::buildDeadManLabels(std::list<BOUNDS>& deadManLabels)
+{
+	for (auto& deadManLabel : deadManLabels)
+	{
+		if (ptrPanel->isElementWithinPanel(deadManLabel))
+			ptrPanel->addDeadmanLabels(deadManLabel);
+	}
+}
+
+void PanelBuilder::buildInternalPanel(std::list<BOUNDS>& internalPanels, std::list<COORDINATES>& internalPanelLines)
 {
 	// collect internal panel Bounds
 	for (auto& internalPanelBound : internalPanels)

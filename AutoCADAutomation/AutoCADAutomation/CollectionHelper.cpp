@@ -6,6 +6,8 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ * 
+ * 8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
 #include "CollectionHelper.h"
@@ -16,6 +18,7 @@ std::list<COORDINATES> CollectionHelper::vecBraceInserts;  // brace inserts
 std::list<BOUNDS> CollectionHelper::vecOpenings; // valid openings
 std::list<COORDINATES> CollectionHelper::vecFutureOpenings; // text position "FUTURE"
 std::list<LABELTEXT> CollectionHelper::vecTextLabels;	// text labels with text and coordinates
+std::list<BOUNDS> CollectionHelper::vecDeadManLabels;	// deadman label bounds
 std::list<BOUNDS> CollectionHelper::vecInternalPanels; // internal panel rectangles
 std::list<COORDINATES> CollectionHelper::vecInternalPanelLines; // Internal Panel lines
 
@@ -225,6 +228,26 @@ void CollectionHelper::CollectTextLabels(AcDbEntity* entity, std::list<LABELTEXT
 	}
 }
 
+// Just store the bounds, storing text is not needed since we need to know only if the 
+// leader is inside the panel or outside the internal panel
+void CollectionHelper::CollectTextLabelsFromLeaders(AcDbEntity* entity, std::list<BOUNDS>& listLeaderBounds)
+{
+	AcDbLeader* textLeader = (AcDbLeader*)entity;
+
+	if (textLeader)
+	{
+		BOUNDS bound;
+		AcDbExtents* boundInfo = new AcDbExtents();
+		textLeader->bounds(*boundInfo);
+		bound.first.first = boundInfo->minPoint().x;
+		bound.first.second = boundInfo->minPoint().y;
+		bound.second.first = boundInfo->maxPoint().x;
+		bound.second.second = boundInfo->maxPoint().y;
+		listLeaderBounds.push_back(bound);
+		delete boundInfo;
+	}
+}
+
 void CollectionHelper::CreatePanelsFromBlockReferences(AcDbEntity* entity, std::list<Panel>& panels)
 {
 	if ((wcscmp(entity->layer(), L"DEFPOINTS") == 0) && (wcscmp(entity->isA()->name(), L"AcDbBlockReference") == 0))
@@ -292,6 +315,15 @@ void CollectionHelper::CollectAllTextLabels(AcDbEntity* entity)
 {
 	if ((wcscmp(entity->layer(), L"REINFORCING_TEXT") == 0) && (wcscmp(entity->isA()->name(), L"AcDbText") == 0))
 		CollectTextLabels(entity, vecTextLabels);
+	if ((wcscmp(entity->layer(), L"PANEL_TEXT") == 0) && ((wcscmp(entity->isA()->name(), L"AcDbLeader") == 0) || (wcscmp(entity->isA()->name(), L"AcDbMLeader") == 0)) )
+	{
+		CollectTextLabelsFromLeaders(entity, vecDeadManLabels);
+	}
+	if ((wcscmp(entity->layer(), L"PANEL_TEXT") == 0))
+	{
+		auto name = entity->isA()->name();
+		int i = 10;
+	}
 }
 
 void CollectionHelper::CollectOpeningDimensions(AcDbEntity* entity)
@@ -419,6 +451,7 @@ void CollectionHelper::PopulatePanelData(std::list<Panel>& panels)
 
 		panelBuilder.updatePanel();
 		panelBuilder.buildLabels(vecTextLabels);
+		panelBuilder.buildDeadManLabels(vecDeadManLabels);
 	}	
 }
 
@@ -429,6 +462,7 @@ void CollectionHelper::ClearCollectionData()
 	vecOpenings.clear();
 	vecFutureOpenings.clear();
 	vecTextLabels.clear();
+	vecDeadManLabels.clear();
 	vecInternalPanels.clear();
 	vecInternalPanelLines.clear();
 

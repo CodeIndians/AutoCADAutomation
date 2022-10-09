@@ -4,10 +4,9 @@
  */
 
  /* -----------------------Revision History------------------------------------------
- *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
- *  * 
  * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
+ * 8-Oct-2022 Raghu - 2.1 Panel Details
  */
 
 #pragma once
@@ -31,9 +30,13 @@ class Panel
 private:
 	BOUNDS bounds;
 	BOUNDS mPanelNameBounds;
+	BOUNDS mNumRequiredBounds;
 	std::string panelName;
+	std::string numRequired;
 	std::string totalThickness;
 	std::string riggingType;
+	std::string rebarCoverExterior;
+	std::string rebarCoverInterior;
 	BOUNDS mInternalPanelBounds;
 	BOUNDS mDetailLabelsBounds;
 	double internalPanelYOffset;
@@ -45,6 +48,7 @@ private:
 	// bounds calculation functions
 	void calculatePanelNameBounds();
 	void calculateDetailLabelsBounds();
+	void calculateNumRequiredLabelBounds();
 
 	// update functions
 	void seperateFutureOpenings();
@@ -71,6 +75,7 @@ public:
 	std::vector<LABELTEXT> vecRebarLabelsInsideInternalPanel;
 	std::vector<LABELTEXT> vecRebarLabelsOutsideInternalPanel;
 	std::vector<LABELTEXT> vecPanelLabels;
+	std::vector<BOUNDS> vecDeadmanLabels;
 	std::vector<LABELTEXT> vecDetailLabels;
 	std::vector< COORDINATES> vecInteralPanelLines;
 
@@ -84,6 +89,8 @@ public:
 	std::vector<BOUNDS> vecPanelDimHorPoints;
 	std::vector<BOUNDS> vecPanelDimVerPoints;
 
+	//panel detauls map
+	std::map<std::string, std::string> panelDetailsMap;
 	std::vector<AcDbRotatedDimension*> vecLiftDimHorPointsAfterReconnect;
 	std::vector<AcDbRotatedDimension*> vecLiftDimVerPointsAfterReconnect;
 
@@ -97,6 +104,7 @@ public:
 	void addPanelLabels(LABELTEXT& panelLabels);
 	void addDetailLabels(LABELTEXT& detailLabels);
 	void addRebarLabels(LABELTEXT& panelLabels, bool inside);
+	void addDeadmanLabels(BOUNDS& deadmanLabels);
 	void addInternalPanelBounds(BOUNDS& internalPanelBounds);
 	void addInternalPanelLines(COORDINATES& internalPanelLines);
 
@@ -116,12 +124,16 @@ public:
 	bool isInterferenceDetected();
 	bool areRebarTextsMatching();
 	std::string getOpeningType(BOUNDS& bound); // should be used only for openings
+	bool isOutsideDeadmanLabelPresent();
+	bool isInsideDeadmanLabelPresent();
 
 	//Get functions
 	BOUNDS& getPanelNameBounds();
 	BOUNDS& getDetailLableBounds();
+	BOUNDS& getNumRequiredBounds();
 	double getInternalPanelYOffset();
 	std::string& getPanelName();
+	std::string& getNumRequired() { return numRequired; }
 	BOUNDS getPanelBounds();
 	std::string& getPanelThickNess();
 	double getPanelWidth();
@@ -129,16 +141,21 @@ public:
 	double getPanelHeightBelowFF();
 	double getPanelHeightAboveFF();
 	std::string getRiggingType();
+	std::string getPanelParameter(std::string key);
+	std::string& getRebarCoverExterior() { return rebarCoverExterior; }
+	std::string& getRebarCoverInterior() { return rebarCoverInterior; }
 	BOUNDS getInternalPanelBounds();
 	CIRCLE GetCG();
 
-
 	//set functions
 	void setPanelName(std::string name);
+	void setNumRequired(std::string numrequired);
 
 	//panel update functions
 	void updatePanel();
 	void updatePanelThickness();
+	void generatePanelDetailsMap();
+	void generateRebarCovers();
 
 	//TODO : move dimensions logic into a different class
 	//void create dimensions
