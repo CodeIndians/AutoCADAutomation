@@ -7,6 +7,7 @@
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
  * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
  * 8-Oct-2022 Raghu - 2.1 Panel Details
+ * 16-Oct-2022 Raghu - 2.2 Similar Rigging
  */
 
 #pragma once
@@ -37,6 +38,7 @@ private:
 	std::string riggingType;
 	std::string rebarCoverExterior;
 	std::string rebarCoverInterior;
+	std::string uniqueRiggingTypeString;
 	BOUNDS mInternalPanelBounds;
 	BOUNDS mDetailLabelsBounds;
 	double internalPanelYOffset;
@@ -141,6 +143,7 @@ public:
 	double getPanelHeightBelowFF();
 	double getPanelHeightAboveFF();
 	std::string getRiggingType();
+	std::string getUniqueRiggingType() { return uniqueRiggingTypeString; }
 	std::string getPanelParameter(std::string key);
 	std::string& getRebarCoverExterior() { return rebarCoverExterior; }
 	std::string& getRebarCoverInterior() { return rebarCoverInterior; }
@@ -156,6 +159,7 @@ public:
 	void updatePanelThickness();
 	void generatePanelDetailsMap();
 	void generateRebarCovers();
+	void generateUniqueRiggingString();
 
 	//TODO : move dimensions logic into a different class
 	//void create dimensions
