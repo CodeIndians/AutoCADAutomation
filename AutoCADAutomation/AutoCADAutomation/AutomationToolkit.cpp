@@ -10,6 +10,7 @@
  * 22-Sep-2022 Satish D			- ABA-4 - Panel Strength
  * 23-Sep-2022 Satish D			- ABA-7/8 - Lift Insert and brace Insert Clearance
  * 8-Oct-2022 Raghu - 2.1 Panel Details
+ * 16-Oct-2022 Raghu - 2.2 Similar Rigging
  */
 
 #include "AutomationToolkit.h"
@@ -315,16 +316,18 @@ void AutomationToolkit::PanelDataLabels()
 
 void AutomationToolkit::IdentifySimilarRigging()
 {
-
 	try
 	{
-
+		CollectPanelInformation();
+		//print rigging data
+		ReportingBase* report = new ReportSimilarRigging(vecPanels);
+		report->ReportData();
+		delete report;
 	}
 	catch (...)
 	{
 		acutPrintf(L"IdentifySimilarRigging Command failed");
 	}
-
 }
 
 /// <summary>

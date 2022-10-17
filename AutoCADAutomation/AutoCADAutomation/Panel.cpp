@@ -8,12 +8,14 @@
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
  * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
  * 8-Oct-2022 Raghu - 2.1 Panel Details
+ * 16-Oct-2022 Raghu - 2.2 Similar Rigging
  */
 
 #include "Panel.h"
 #include <algorithm>
 #include <unordered_set>
 #include <limits>
+#include <float.h>
 
 Panel::Panel(BOUNDS boundinfo)
 {
@@ -34,6 +36,7 @@ Panel::Panel(BOUNDS boundinfo)
 	mInternalPanelBounds.second.first = 0.0;
 	mInternalPanelBounds.first.second = 0.0;
 	mInternalPanelBounds.second.second = 0.0;
+	uniqueRiggingTypeString = "NA";
 }
 
 void Panel::addLiftInsert(CIRCLE &liftInsert)
@@ -140,6 +143,7 @@ void Panel::updatePanel()
 	updateRiggingType();
 	detectInterferenceCheck();
 	updateFFYPosition();
+	generateUniqueRiggingString();
 
 	// dimensions
 	createDimensions(vecOpeningDimHorPoints,vecOpeningDimVerPoints, L"OPENING_DIMENSIONS");
@@ -252,6 +256,51 @@ void Panel::generateRebarCovers()
 		}
 	}
 }
+
+// 2.2 :: ABA-3 :: Rigging Date ( Generate unique rigging string ) 
+void Panel::generateUniqueRiggingString()
+{
+	std::vector<BOUNDS> floorOpenings;
+	std::vector<BOUNDS> middleOpenings;
+	for (auto& opening : vecOpenings)
+	{
+		// do not consider the future openings
+		if (std::find(vecFutureOpenings.begin(), vecFutureOpenings.end(), opening) == vecFutureOpenings.end())
+		{
+			// floor opening condition
+			// compare the y positions of floor opening and internal panel to identify the floor openings 
+			if (Utilities::getUtils()->approximatelyEqual(opening.first.second, mInternalPanelBounds.first.second))
+				floorOpenings.push_back(opening);
+			else
+				middleOpenings.push_back(opening);
+		}
+	}
+
+	if (floorOpenings.size() > 0 && middleOpenings.size() > 0)
+	{
+		double highestFloorOpeningHeight = DBL_MAX;
+		double highestMiddleOpeningHeight = DBL_MAX;
+
+		// get the highest floor opening height
+		for (auto& floorOpening : floorOpenings)
+		{
+			double height = mInternalPanelBounds.second.second - floorOpening.second.second;
+			if (height < highestFloorOpeningHeight)
+				highestFloorOpeningHeight = height;
+		}
+
+		// get the highest middle opening height
+		for (auto& middleOpening : middleOpenings)
+		{
+			double height = mInternalPanelBounds.second.second - middleOpening.second.second;
+			if (height < highestMiddleOpeningHeight)
+				highestMiddleOpeningHeight = height;
+		}
+
+		uniqueRiggingTypeString = "F" + Utilities::getUtils()->inchesToFeet(highestFloorOpeningHeight) + "M" + Utilities::getUtils()->inchesToFeet(highestMiddleOpeningHeight);
+	}
+}
+	
 
 void Panel::createDimensions(std::vector<BOUNDS>& horizontalBounds, std::vector<BOUNDS>& verticalBounds, AcString layer)
 {
