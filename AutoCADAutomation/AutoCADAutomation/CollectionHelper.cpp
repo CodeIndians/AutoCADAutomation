@@ -8,6 +8,7 @@
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
  * 
  * 8-Oct-2022 Raghu - 2.1 Panel Details
+ * 25-Oct-2022 SatishD - 2.9 Reveal positions
  */
 
 #include "CollectionHelper.h"
@@ -15,6 +16,7 @@
 
 std::list<CIRCLE> CollectionHelper::vecLiftInserts;	//lift inserts
 std::list<COORDINATES> CollectionHelper::vecBraceInserts;  // brace inserts
+std::list<BOUNDS> CollectionHelper::vecReveals; // Reveals collection
 std::list<BOUNDS> CollectionHelper::vecOpenings; // valid openings
 std::list<COORDINATES> CollectionHelper::vecFutureOpenings; // text position "FUTURE"
 std::list<LABELTEXT> CollectionHelper::vecTextLabels;	// text labels with text and coordinates
@@ -76,6 +78,26 @@ void CollectionHelper::CollectRectanglesFromPolyLines(AcDbEntity* entity, std::l
 		bound.second.first = boundInfo->maxPoint().x;
 		bound.second.second = boundInfo->maxPoint().y;
 		rectangles.push_back(bound);
+		delete boundInfo;
+	}
+}
+
+void CollectionHelper::CollectHorizontalRecFromPolylines(AcDbEntity* entity, std::list<BOUNDS>& rectangles)
+{
+	AcDbPolyline* rectangle = (AcDbPolyline*)entity;
+	if (rectangle)
+	{
+		BOUNDS bound;
+		AcDbExtents* boundInfo = new AcDbExtents();
+		rectangle->bounds(*boundInfo);
+		bound.first.first = boundInfo->minPoint().x;
+		bound.first.second = boundInfo->minPoint().y;
+		bound.second.first = boundInfo->maxPoint().x;
+		bound.second.second = boundInfo->maxPoint().y;
+
+		if((abs(bound.first.first - bound.second.first) > abs(bound.first.second - bound.second.second)) && (abs(bound.first.second - bound.second.second) < 10.0))
+			rectangles.push_back(bound);
+		                                                                          
 		delete boundInfo;
 	}
 }
@@ -294,6 +316,18 @@ void CollectionHelper::CollectOpenings(AcDbEntity* entity)
 	}
 }
 
+void CollectionHelper::CollectReveals(AcDbEntity* entity)
+{
+	//collect openings
+	if (wcscmp(entity->layer(), L"REVEAL") == 0)
+	{
+		acutPrintf(entity->isA()->name());
+		// collect rectangles - closed openings
+		if (wcscmp(entity->isA()->name(), L"AcDbPolyline") == 0)
+			CollectHorizontalRecFromPolylines(entity, vecReveals);
+	}
+}
+
 void CollectionHelper::CollectDefPoints(AcDbEntity* entity, std::list<Panel>& listDefPanels)
 {
 	if ((wcscmp(entity->layer(), L"DEFPOINTS") == 0) && (wcscmp(entity->isA()->name(), L"AcDbBlockReference") == 0))
@@ -437,6 +471,7 @@ void CollectionHelper::PopulatePanelData(std::list<Panel>& panels)
 		auto panelBuilder = PanelBuilder(panel);
 		panelBuilder.buildLiftInserts(vecLiftInserts);
 		panelBuilder.buildBraceInserts(vecBraceInserts);
+		panelBuilder.buildReveals (vecReveals);
 		panelBuilder.buildOpenings(vecOpenings, vecFutureOpenings);
 		panelBuilder.buildInternalPanel(vecInternalPanels, vecInternalPanelLines);
 
@@ -465,6 +500,7 @@ void CollectionHelper::ClearCollectionData()
 	vecDeadManLabels.clear();
 	vecInternalPanels.clear();
 	vecInternalPanelLines.clear();
+	vecReveals.clear();
 
 	//dimensions
 	vecHorDimOpeningPlaceHolders.clear();

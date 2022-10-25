@@ -162,6 +162,7 @@
     <ClCompile Include="Reporting/ReportingPanelData.cpp" />
     <ClCompile Include="Reporting\ReportingInsertClearance.cpp" />
     <ClCompile Include="Reporting\ReportingPanelStrength.cpp" />
+    <ClCompile Include="Reporting\ReportingReveals.cpp" />
     <ClCompile Include="Reporting\ReportingUnroundedLiftInserts.cpp" />
     <ClCompile Include="Reporting\ReportSimilarRigging.cpp" />
     <ClCompile Include="Utilities.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="Reporting/ReportingPanelData.h" />
     <ClInclude Include="Reporting\ReportingInsertClerance.h" />
     <ClInclude Include="Reporting\ReportingPanelStrength.h" />
+    <ClInclude Include="Reporting\ReportingReveals.h" />
     <ClInclude Include="Reporting\ReportingUnroundedLiftInserts.h" />
     <ClInclude Include="Reporting\ReportSimilarRigging.h" />
     <ClInclude Include="Utilities.h" />

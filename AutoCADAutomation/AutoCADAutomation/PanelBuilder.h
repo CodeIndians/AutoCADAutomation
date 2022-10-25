@@ -6,6 +6,7 @@
  /* -----------------------Revision History------------------------------------------
  *
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
+ * 25-Oct-2022 SatishD - 2.9 Reveal positions
  */
 
 #pragma once
@@ -19,6 +20,7 @@ public:
 	PanelBuilder(Panel &panel);
 	void buildLiftInserts(std::list<CIRCLE>& liftInserts);
 	void buildBraceInserts(std::list<COORDINATES>& braceInserts);
+	void buildReveals(std::list<BOUNDS>& reveals);
 	void buildOpenings(std::list<BOUNDS>& openings, std::list<COORDINATES> futureTextCordinates);
 	void buildLabels(std::list<LABELTEXT>& textLabels);
 	void buildDeadManLabels(std::list<BOUNDS>& deadManLabels);

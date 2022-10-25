@@ -11,6 +11,7 @@
  * 23-Sep-2022 Satish D			- ABA-7/8 - Lift Insert and brace Insert Clearance
  * 8-Oct-2022 Raghu - 2.1 Panel Details
  * 16-Oct-2022 Raghu - 2.2 Similar Rigging
+ * 25-Oct-2022 SatishD - 2.9 Reveal positions
  */
 
 #include "AutomationToolkit.h"
@@ -126,6 +127,7 @@ void AutomationToolkit::CollectPanelInformation(bool dimensions)
 			CollectionHelper::CollectOpenings(pEnt);
 			CollectionHelper::CollectInternalPanels(pEnt);
 			CollectionHelper::CollectAllTextLabels(pEnt);
+			CollectionHelper::CollectReveals(pEnt);
 		}
 
 		if (dimensions)
@@ -520,6 +522,12 @@ void AutomationToolkit::RevealPostions()
 
 	try
 	{
+		CollectPanelInformation(false);
+
+		// print data
+		ReportingBase* report = new ReportingReveals(vecPanels);
+		report->ReportData();
+		delete report;
 
 	}
 	catch (...)

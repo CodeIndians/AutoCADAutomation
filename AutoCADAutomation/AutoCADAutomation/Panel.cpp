@@ -9,6 +9,7 @@
  * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
  * 8-Oct-2022 Raghu - 2.1 Panel Details
  * 16-Oct-2022 Raghu - 2.2 Similar Rigging
+ * 25-Oct-2022 SatishD - 2.9 Reveal positions
  */
 
 #include "Panel.h"
@@ -47,6 +48,11 @@ void Panel::addLiftInsert(CIRCLE &liftInsert)
 void Panel::addBraceInsert(COORDINATES &braceInsert)
 {
 	vecBraceInserts.push_back(braceInsert);
+}
+
+void Panel::addReveal(BOUNDS& reveal)
+{
+	vecReveals.push_back(reveal);
 }
 
 void Panel::addOpening(BOUNDS& opening)
