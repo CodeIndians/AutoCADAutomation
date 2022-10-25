@@ -9,6 +9,7 @@
  * 
  * 8-Oct-2022 Raghu - 2.1 Panel Details
  * 25-Oct-2022 SatishD - 2.9 Reveal positions
+ * 25-Oct-2022 SatishD - Removed Print statement
  */
 
 #include "CollectionHelper.h"
@@ -321,7 +322,6 @@ void CollectionHelper::CollectReveals(AcDbEntity* entity)
 	//collect openings
 	if (wcscmp(entity->layer(), L"REVEAL") == 0)
 	{
-		acutPrintf(entity->isA()->name());
 		// collect rectangles - closed openings
 		if (wcscmp(entity->isA()->name(), L"AcDbPolyline") == 0)
 			CollectHorizontalRecFromPolylines(entity, vecReveals);

@@ -13,6 +13,7 @@
  * 8-Oct-2022 Raghu - 2.1 Panel Details
  * 16-Oct-2022 Raghu - 2.2 Similar Rigging
  * 25-Oct-2022 SatishD - 2.9 Reveal positions
+ * 25-Oct-2022 SatishD - 2.9 Reveal positions
  */
 
 #pragma once
@@ -28,6 +29,7 @@
 #include "Reporting/ReportingInsertClerance.h"
 #include "Reporting/ReportSimilarRigging.h"
 #include "Reporting/ReportingReveals.h"
+#include "Reporting/ReportingRevealsClearance.h"
 #include "InputBox.h"
 #include <string>
 

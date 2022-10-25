@@ -12,6 +12,7 @@
  * 8-Oct-2022 Raghu - 2.1 Panel Details
  * 16-Oct-2022 Raghu - 2.2 Similar Rigging
  * 25-Oct-2022 SatishD - 2.9 Reveal positions
+ * 25-Oct-2022 SatishD - 2.10 Reveal Clearance
  */
 
 #include "AutomationToolkit.h"
@@ -550,6 +551,12 @@ void AutomationToolkit::InsertsDistFromReveals()
 
 	try
 	{
+		CollectPanelInformation(false);
+
+		// print data
+		ReportingBase* report = new ReportingRevealsClearance(vecPanels);
+		report->ReportData();
+		delete report;
 
 	}
 	catch (...)
