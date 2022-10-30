@@ -8,6 +8,7 @@
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
  * 
  * 8-Oct-2022 Raghu - 2.1 Panel Details
+ * 25-Oct-2022 SatishD - 2.9 Reveal positions
  */
 
 #include "PanelBuilder.h"
@@ -32,6 +33,15 @@ void PanelBuilder::buildBraceInserts(std::list<COORDINATES>& braceInserts)
 	{
 		if (ptrPanel->isElementWithinPanel(braceInsert))
 			ptrPanel->addBraceInsert(braceInsert);
+	}
+}
+
+void PanelBuilder::buildReveals(std::list<BOUNDS>& reveals)
+{
+	for (auto& reveal : reveals)
+	{
+		if (ptrPanel->isElementWithinPanel(reveal))
+			ptrPanel->addReveal(reveal);
 	}
 }
 

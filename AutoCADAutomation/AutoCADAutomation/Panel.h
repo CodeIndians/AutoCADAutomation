@@ -8,6 +8,7 @@
  * 22-Sep-2022 Satish D	- ABA-4 - Panel Strength
  * 8-Oct-2022 Raghu - 2.1 Panel Details
  * 16-Oct-2022 Raghu - 2.2 Similar Rigging
+ * 25-Oct-2022 SatishD - 2.9 Reveal positions
  */
 
 #pragma once
@@ -73,6 +74,7 @@ public:
 	std::vector<BOUNDS> vecFutureOpenings;
 	std::vector<CIRCLE> vecLiftInserts;
 	std::vector<COORDINATES> vecBraceInserts;
+	std::vector<BOUNDS> vecReveals;
 	std::vector<COORDINATES> vecFutureCoordinates;
 	std::vector<LABELTEXT> vecRebarLabelsInsideInternalPanel;
 	std::vector<LABELTEXT> vecRebarLabelsOutsideInternalPanel;
@@ -101,6 +103,7 @@ public:
 	// Panel add methods
 	void addLiftInsert(CIRCLE &liftInsert);
 	void addBraceInsert(COORDINATES &braceInsert);
+	void addReveal(BOUNDS& braceInsert);
 	void addOpening(BOUNDS& opening);
 	void addFutureTextCoordinates(COORDINATES& futuretextposition);
 	void addPanelLabels(LABELTEXT& panelLabels);

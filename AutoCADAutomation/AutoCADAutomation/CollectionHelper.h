@@ -8,6 +8,7 @@
  * 11-Sep-2022	SatishD/Raghu	- Initial Creation
  * 
  * 8-Oct-2022 Raghu - 2.1 Panel Details
+ * 25-Oct-2022 SatishD - 2.9 Reveal positions
  */
 
 #pragma once
@@ -19,6 +20,7 @@ private:
 	static std::list<CIRCLE> vecLiftInserts;	// lift inserts
 	static std::list<COORDINATES> vecBraceInserts;  // brace inserts
 	static std::list<BOUNDS> vecOpenings; // valid openings
+	static std::list<BOUNDS> vecReveals; // Reveals
 	static std::list<COORDINATES> vecFutureOpenings; // text position "FUTURE"
 	static std::list<LABELTEXT> vecTextLabels;	// text labels with text and coordinates
 	static std::list<BOUNDS> vecDeadManLabels; // deadman leader labels
@@ -41,6 +43,7 @@ private:
 	static void CollectCircles(AcDbEntity* entity, std::list<COORDINATES>& circles);
 	static void CollectCircles(AcDbEntity* entity, std::list<CIRCLE>& circles);
 	static void CollectRectanglesFromPolyLines(AcDbEntity* entity, std::list<BOUNDS>& rectangles);
+	static void CollectHorizontalRecFromPolylines(AcDbEntity* entity, std::list<BOUNDS>& rectangles);
 	static void CollectRectanglesFromBlockReferences(AcDbEntity* entity, std::list<BOUNDS>& rectangles);
 	static void CollectLines(AcDbEntity* entity, std::list<COORDINATES>& points);
 	static void CollectLinesWithAnAngle(AcDbEntity* entity, std::list<BOUNDS>& lineBounds); // acute angle lines
@@ -53,6 +56,7 @@ public:
 	static void CollectLiftInserts(AcDbEntity* entity);
 	static void CollectBraceInserts(AcDbEntity* entity);
 	static void CollectOpenings(AcDbEntity* entity);
+	static void CollectReveals(AcDbEntity* entity);
 	static void CollectDefPoints(AcDbEntity* entity, std::list<Panel>& listDefPanel);
 	static void CollectInternalPanels(AcDbEntity* entity);
 	static void CollectAllTextLabels(AcDbEntity* entity);
