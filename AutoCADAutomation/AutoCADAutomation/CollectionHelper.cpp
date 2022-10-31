@@ -16,6 +16,7 @@
 #include "PanelBuilder.h"
 
 std::list<CIRCLE> CollectionHelper::vecLiftInserts;	//lift inserts
+std::list<CIRCLE> CollectionHelper::vecEdgeLifts;	//edge lifts
 std::list<COORDINATES> CollectionHelper::vecBraceInserts;  // brace inserts
 std::list<BOUNDS> CollectionHelper::vecReveals; // Reveals collection
 std::list<BOUNDS> CollectionHelper::vecOpenings; // valid openings
@@ -63,6 +64,20 @@ void CollectionHelper::CollectCircles(AcDbEntity* entity, std::list<CIRCLE>& cir
 		circleElement.first.second = centerPoint.y;
 		circleElement.second = circle->radius();
 		circles.push_back(circleElement);
+	}
+}
+
+void CollectionHelper::CollectArcs(AcDbEntity* entity, std::list<CIRCLE>& arcs)
+{
+	AcDbArc* arc = (AcDbArc*)entity;
+	if (arc)
+	{
+		CIRCLE circleElement;
+		auto centerPoint = arc->center();
+		circleElement.first.first = centerPoint.x;
+		circleElement.first.second = centerPoint.y;
+		circleElement.second = arc->radius();
+		arcs.push_back(circleElement);
 	}
 }
 
@@ -296,6 +311,8 @@ void CollectionHelper::CollectLiftInserts(AcDbEntity* entity)
 {
 	if ((wcscmp(entity->layer(), L"LIFT_INSERT") == 0) && (wcscmp(entity->isA()->name(), L"AcDbCircle") == 0))
 		CollectCircles(entity, vecLiftInserts);
+	if ((wcscmp(entity->layer(), L"LIFT_INSERT") == 0) && (wcscmp(entity->isA()->name(), L"AcDbArc") == 0))
+		CollectCircles(entity, vecEdgeLifts);
 }
 
 void CollectionHelper::CollectBraceInserts(AcDbEntity* entity)
@@ -470,6 +487,7 @@ void CollectionHelper::PopulatePanelData(std::list<Panel>& panels)
 		// collect the added coordiante indexes from the list and delete them on the next loop
 		auto panelBuilder = PanelBuilder(panel);
 		panelBuilder.buildLiftInserts(vecLiftInserts);
+		panelBuilder.buildEdgelifts(vecEdgeLifts);
 		panelBuilder.buildBraceInserts(vecBraceInserts);
 		panelBuilder.buildReveals (vecReveals);
 		panelBuilder.buildOpenings(vecOpenings, vecFutureOpenings);

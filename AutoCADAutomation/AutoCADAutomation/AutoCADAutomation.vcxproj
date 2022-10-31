@@ -151,6 +151,7 @@
   <ItemGroup>
     <ClCompile Include="AutomationToolkit.cpp" />
     <ClCompile Include="CollectionHelper.cpp" />
+    <ClCompile Include="DeadmanNotesHelper.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="InputBox.cpp" />
     <ClCompile Include="Panel.cpp" />
@@ -171,6 +172,7 @@
   <ItemGroup>
     <ClInclude Include="AutomationToolkit.h" />
     <ClInclude Include="CollectionHelper.h" />
+    <ClInclude Include="DeadmanNotesHelper.h" />
     <ClInclude Include="InputBox.h" />
     <ClInclude Include="Panel.h" />
     <ClInclude Include="PanelBuilder.h" />

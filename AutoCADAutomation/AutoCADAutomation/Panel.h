@@ -73,6 +73,7 @@ public:
 	std::list<BOUNDS> vecOpenings;
 	std::vector<BOUNDS> vecFutureOpenings;
 	std::vector<CIRCLE> vecLiftInserts;
+	std::vector<CIRCLE> vecEdgeLifts;
 	std::vector<COORDINATES> vecBraceInserts;
 	std::vector<BOUNDS> vecReveals;
 	std::vector<COORDINATES> vecFutureCoordinates;
@@ -102,6 +103,7 @@ public:
 
 	// Panel add methods
 	void addLiftInsert(CIRCLE &liftInsert);
+	void addEdgeLift(CIRCLE& edgeLift);
 	void addBraceInsert(COORDINATES &braceInsert);
 	void addReveal(BOUNDS& braceInsert);
 	void addOpening(BOUNDS& opening);

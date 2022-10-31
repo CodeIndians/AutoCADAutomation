@@ -19,6 +19,7 @@ private:
 public:
 	PanelBuilder(Panel &panel);
 	void buildLiftInserts(std::list<CIRCLE>& liftInserts);
+	void buildEdgelifts(std::list<CIRCLE>& edgeLifts);
 	void buildBraceInserts(std::list<COORDINATES>& braceInserts);
 	void buildReveals(std::list<BOUNDS>& reveals);
 	void buildOpenings(std::list<BOUNDS>& openings, std::list<COORDINATES> futureTextCordinates);

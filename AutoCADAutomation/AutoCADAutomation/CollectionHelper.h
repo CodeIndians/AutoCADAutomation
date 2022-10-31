@@ -18,6 +18,7 @@ class CollectionHelper
 {
 private:
 	static std::list<CIRCLE> vecLiftInserts;	// lift inserts
+	static std::list<CIRCLE> vecEdgeLifts;	//edge lifts
 	static std::list<COORDINATES> vecBraceInserts;  // brace inserts
 	static std::list<BOUNDS> vecOpenings; // valid openings
 	static std::list<BOUNDS> vecReveals; // Reveals
@@ -42,6 +43,7 @@ private:
 	
 	static void CollectCircles(AcDbEntity* entity, std::list<COORDINATES>& circles);
 	static void CollectCircles(AcDbEntity* entity, std::list<CIRCLE>& circles);
+	static void CollectArcs(AcDbEntity* entity, std::list<CIRCLE>& arcs);
 	static void CollectRectanglesFromPolyLines(AcDbEntity* entity, std::list<BOUNDS>& rectangles);
 	static void CollectHorizontalRecFromPolylines(AcDbEntity* entity, std::list<BOUNDS>& rectangles);
 	static void CollectRectanglesFromBlockReferences(AcDbEntity* entity, std::list<BOUNDS>& rectangles);
