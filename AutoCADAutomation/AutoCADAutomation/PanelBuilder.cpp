@@ -27,6 +27,15 @@ void PanelBuilder::buildLiftInserts(std::list<CIRCLE>& liftInserts)
 	}
 }
 
+void PanelBuilder::buildEdgelifts(std::list<CIRCLE>& edgeLifts)
+{
+	for (auto& edgeLift : edgeLifts)
+	{
+		if (ptrPanel->isElementWithinPanel(edgeLift))
+			ptrPanel->addEdgeLift(edgeLift);
+	}
+}
+
 void PanelBuilder::buildBraceInserts(std::list<COORDINATES>& braceInserts)
 {
 	for (auto& braceInsert : braceInserts)

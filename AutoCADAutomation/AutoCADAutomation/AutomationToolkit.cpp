@@ -374,7 +374,12 @@ void AutomationToolkit::LiftAndEgdeNotes()
 
 	try
 	{
+		CollectPanelInformation(false);
 
+		// print data
+		DeadmanNotesHelper* deadmanNotes = new DeadmanNotesHelper(vecPanels);
+		deadmanNotes->PlaceLabels();
+		delete deadmanNotes;
 	}
 	catch (...)
 	{
@@ -500,7 +505,6 @@ void AutomationToolkit::RebarLabelsDeadmanNotes()
 
 	try
 	{
-
 	}
 	catch (...)
 	{

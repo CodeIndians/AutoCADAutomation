@@ -44,6 +44,10 @@ void Panel::addLiftInsert(CIRCLE &liftInsert)
 {
 	vecLiftInserts.push_back(liftInsert);
 }
+void Panel::addEdgeLift(CIRCLE& edgeLift)
+{
+	vecEdgeLifts.push_back(edgeLift);
+}
 
 void Panel::addBraceInsert(COORDINATES &braceInsert)
 {

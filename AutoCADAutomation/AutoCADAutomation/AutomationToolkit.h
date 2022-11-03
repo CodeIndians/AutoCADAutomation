@@ -19,6 +19,7 @@
 #pragma once
 #include<vector>
 #include "PanelBuilder.h"
+#include "DeadmanNotesHelper.h"
 #include "Reporting/ReportingExcel.h"
 #include "Reporting/ReportingInterference.h"
 #include "Reporting/ReportingRebar.h"
@@ -30,6 +31,7 @@
 #include "Reporting/ReportSimilarRigging.h"
 #include "Reporting/ReportingReveals.h"
 #include "Reporting/ReportingRevealsClearance.h"
+#include "DeadmanNotesHelper.h"
 #include "InputBox.h"
 #include <string>
 

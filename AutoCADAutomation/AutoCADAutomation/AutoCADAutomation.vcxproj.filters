@@ -55,6 +55,9 @@
     <ClCompile Include="Reporting\ReportingRevealsClearance.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DeadmanNotesHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutomationToolkit.h">
@@ -109,6 +112,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Reporting\ReportingRevealsClearance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DeadmanNotesHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
