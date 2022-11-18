@@ -32,6 +32,7 @@
 #include "Reporting/ReportingReveals.h"
 #include "Reporting/ReportingRevealsClearance.h"
 #include "DeadmanNotesHelper.h"
+#include "RebarNotesHelper.h"
 #include "InputBox.h"
 #include <string>
 
