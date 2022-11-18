@@ -505,6 +505,13 @@ void AutomationToolkit::RebarLabelsDeadmanNotes()
 
 	try
 	{
+		CollectPanelInformation(false);
+
+		// print data
+		RebarNotesHelper* rebarNotes = new RebarNotesHelper(vecPanels);
+		rebarNotes->PlaceLabels();
+		delete rebarNotes;
+
 	}
 	catch (...)
 	{
