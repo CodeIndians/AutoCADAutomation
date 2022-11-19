@@ -47,6 +47,7 @@ void ReportingPanelData::PrintData(Panel& panel)
 
 void ReportingPanelData::PrintLine(ExcelSchema& excelObject)
 {
+	csvfile << excelObject.panelId << delim;
 	csvfile << excelObject.cableLength << delim;
 	csvfile << excelObject.braceId << delim;
 	csvfile << excelObject.braceQty << delim;
@@ -58,7 +59,6 @@ void ReportingPanelData::PrintLine(ExcelSchema& excelObject)
 	csvfile << excelObject.liftInsert << delim;
 	csvfile << excelObject.FcReqdLift << delim;
 	csvfile << excelObject.noRequired << delim;
-	csvfile << excelObject.panelId << delim;
 	csvfile << excelObject.dscJobNumber << delim;
 	csvfile << excelObject.project << delim;
 	csvfile << excelObject.date << delim;

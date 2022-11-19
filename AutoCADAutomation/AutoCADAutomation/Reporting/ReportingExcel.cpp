@@ -37,6 +37,11 @@ void ReportingExcel::InitializeHeader()
 		std::string brace = "Brace Insert ( B" + num + " )";
 		headerObject.braceInserts[i] = brace + "X Loc" + delim + brace + "Y Loc";
 	}
+	for (int i = 0; i < 20; i++)
+	{
+		std::string reveal = "Reveal " + std::to_string(i + 1);
+		headerObject.reveals[i] = reveal + " X1" + delim + reveal + " Y1" + delim + reveal + " X2" + delim + reveal + "Y2";
+	}
 }
 
 void ReportingExcel::PrintHeader()
@@ -68,9 +73,11 @@ void ReportingExcel::PrintLine(ExcelSchema& excelObject)
 	}
 	for (int i = 0; i < 7; i++)
 	{
-		csvfile << excelObject.braceInserts[i];
-		if (i < 4)
-			csvfile << delim;
+		csvfile << excelObject.braceInserts[i] << delim;
+	}
+	for (int i = 0; i < 20; i++)
+	{
+		csvfile << excelObject.reveals[i] << delim;
 	}
 	csvfile << std::endl;
 }
@@ -98,6 +105,12 @@ void ReportingExcel::UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel& p
 	for (auto& braceInsert : panel.vecBraceInserts)
 	{
 		excelObject.braceInserts[index] = std::to_string(braceInsert.first) + delim + std::to_string(braceInsert.second);
+		index++;
+	}
+	index = 0;
+	for (auto& reveal : panel.vecReveals)
+	{
+		excelObject.reveals[index] = std::to_string(reveal.first.first) + delim + std::to_string(reveal.first.second) + delim + std::to_string(reveal.second.first) + delim + std::to_string(reveal.second.second);
 		index++;
 	}
 }
