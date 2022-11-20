@@ -92,25 +92,25 @@ void ReportingExcel::UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel& p
 	int index = 0;
 	for (auto& opening : panel.vecOpenings)
 	{
-		excelObject.openings[index] = panel.getOpeningType(opening) + delim + Utilities::getUtils()->inchesToFeet(Utilities::getUtils()->getBoundsWidth(opening)) + delim + Utilities::getUtils()->inchesToFeet(Utilities::getUtils()->getBoundsHeight(opening)) + delim + std::to_string(opening.first.first) + delim + std::to_string(opening.first.second);
+		excelObject.openings[index] = panel.getOpeningType(opening) + delim + Utilities::getUtils()->inchesToFeet(Utilities::getUtils()->getBoundsWidth(opening)) + delim + Utilities::getUtils()->inchesToFeet(Utilities::getUtils()->getBoundsHeight(opening)) + delim + std::to_string(opening.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(opening.first.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
 	index = 0;
 	for (auto& liftInsert : panel.vecLiftInserts)
 	{
-		excelObject.liftInserts[index] = std::to_string(liftInsert.first.first) + delim + std::to_string(liftInsert.first.second);
+		excelObject.liftInserts[index] = std::to_string(liftInsert.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(liftInsert.first.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
 	index = 0;
 	for (auto& braceInsert : panel.vecBraceInserts)
 	{
-		excelObject.braceInserts[index] = std::to_string(braceInsert.first) + delim + std::to_string(braceInsert.second);
+		excelObject.braceInserts[index] = std::to_string(braceInsert.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(braceInsert.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
 	index = 0;
 	for (auto& reveal : panel.vecReveals)
 	{
-		excelObject.reveals[index] = std::to_string(reveal.first.first) + delim + std::to_string(reveal.first.second) + delim + std::to_string(reveal.second.first) + delim + std::to_string(reveal.second.second);
+		excelObject.reveals[index] = std::to_string(reveal.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(reveal.first.second - panel.getInternalPanelBounds().first.second) + delim + std::to_string(reveal.second.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(reveal.second.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
 }
