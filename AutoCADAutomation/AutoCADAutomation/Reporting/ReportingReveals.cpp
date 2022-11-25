@@ -50,7 +50,7 @@ void ReportingReveals::UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel&
 	int index = 0;
 	for (auto& reveal : panel.vecReveals)
 	{
-		excelObject.reveals[index] = std::to_string(reveal.first.first ) + delim + std::to_string (reveal.first.second) +  delim + std::to_string(reveal.second.first) + delim + std::to_string ( reveal.second.second);
+		excelObject.reveals[index] = std::to_string(reveal.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string (reveal.first.second - panel.getInternalPanelBounds().first.second) +  delim + std::to_string(reveal.second.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string ( reveal.second.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
 }
