@@ -27,7 +27,7 @@ private:
 		std::string riggingType;
 		std::string liftInserts[16];
 		std::string braceInserts[7];
-		std::string reveals[20];
+		std::string reveals[22];
 		ExcelSchema() : name(""), panelWidth(""), panelHeight(",,"), thickness(""), riggingType("")
 		{
 			for (int i = 0; i < 6; i++)
@@ -36,7 +36,7 @@ private:
 				liftInserts[i] = ",";
 			for (int i = 0; i < 7; i++)
 				braceInserts[i] = ",";
-			for (int i = 0; i < 20; i++)
+			for (int i = 0; i < 22; i++)
 				reveals[i] = ",,,";
 		}
 	};
