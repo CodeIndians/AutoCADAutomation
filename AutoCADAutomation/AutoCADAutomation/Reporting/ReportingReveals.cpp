@@ -14,7 +14,7 @@
 void ReportingReveals::InitializeHeader()
 {
 	headerObject.name = "Panel Name";
-	for (int i = 0; i < 20; i++)
+	for (int i = 0; i < 22; i++)
 	{
 		std::string reveal = "Reveal " + std::to_string(i + 1);
 		headerObject.reveals[i] = reveal + " X1" + delim + reveal + " Y1" + delim + reveal + " X2" + delim + reveal + "Y2";
@@ -36,7 +36,7 @@ void ReportingReveals::PrintData(Panel &panel)
 void ReportingReveals::PrintLine(ExcelSchema& excelObject)
 {
 	csvfile << excelObject.name << delim;
-	for (int i = 0; i < 20; i++)
+	for (int i = 0; i < 22; i++)
 	{
 		csvfile << excelObject.reveals[i] << delim;
 	}
@@ -48,8 +48,11 @@ void ReportingReveals::UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel&
 {
 	excelObject.name = panel.getPanelName();
 	int index = 0;
+
 	for (auto& reveal : panel.vecReveals)
 	{
+		if (index >= 22)
+			break;
 		excelObject.reveals[index] = std::to_string(reveal.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string (reveal.first.second - panel.getInternalPanelBounds().first.second) +  delim + std::to_string(reveal.second.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string ( reveal.second.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}

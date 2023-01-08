@@ -24,16 +24,23 @@ AcDbVoidPtrArray AutomationToolkit::entSetSecondLevel;
 
 void AutomationToolkit::AbsolutePositions()
 {
-	// Collect Panel Data
-	CollectPanelInformation();
+	try
+	{
+		// Collect Panel Data
+		CollectPanelInformation();
 
-	// print data
-	ReportingBase* report = new ReportingExcel(vecPanels);
-	report->ReportData();
-	delete report;
-	
-	// Display the AutoCAD Text Window
-	acedTextScr();
+		// print data
+		ReportingBase* report = new ReportingExcel(vecPanels);
+		report->ReportData();
+		delete report;
+
+		// Display the AutoCAD Text Window
+		acedTextScr();
+	}
+	catch (...)
+	{
+		acutPrintf(L"Collecting absolute positions failed");
+	}
 
 }
 
@@ -94,6 +101,9 @@ void AutomationToolkit::CollectPanelInformation(bool dimensions)
 {
 	vecPanels.clear();
 
+	// collect def points in read mode. No need to chnage the lock on def points now.
+	CollectDefPointsPanels();
+
 	// Get the current database
 	AcDbDatabase* pDb = acdbHostApplicationServices()->workingDatabase();
 
@@ -118,8 +128,6 @@ void AutomationToolkit::CollectPanelInformation(bool dimensions)
 
 		if (pEnt == nullptr)
 			continue;
-
-		CollectionHelper::CollectDefPoints(pEnt, vecPanels);
 
 		if (!dimensions)
 		{
@@ -157,6 +165,43 @@ void AutomationToolkit::CollectPanelInformation(bool dimensions)
 
 	//clear collection data when the panels are filled in the current diagram
 	CollectionHelper::ClearCollectionData(); 
+}
+
+void AutomationToolkit::CollectDefPointsPanels()
+{
+	// Get the current database
+	AcDbDatabase* pDb = acdbHostApplicationServices()->workingDatabase();
+
+	// Get the current space object
+	AcDbBlockTableRecord* pBlockTableRecord;
+	Acad::ErrorStatus es = acdbOpenObject(pBlockTableRecord, pDb->currentSpaceId(), AcDb::kForRead);
+
+	// Create a new block iterator that will be used to step through each object
+	AcDbBlockTableRecordIterator* pItr;
+
+	pBlockTableRecord->newIterator(pItr);
+
+	// Create a variable AcDbEntity type which is a generic
+	// object to represent a Line, Circle, Arc, among other objects
+	AcDbEntity* pEnt;
+
+	// Step through each object in the current space
+	for (pItr->start(); !pItr->done(); pItr->step())
+	{
+		// Get the entity and open it for read
+		pItr->getEntity(pEnt, AcDb::kForRead);
+
+		if (pEnt == nullptr)
+			continue;
+
+		CollectionHelper::CollectDefPoints(pEnt, vecPanels);
+		pEnt->close();
+	}
+	// Close the current space object
+	pBlockTableRecord->close();
+
+	// Remove the block iterator object from memory
+	delete pItr;
 }
 
 void AutomationToolkit::CollectPanelDetailsInformationFromWhitePaper(PanelWhitePaper& whitePaper)

@@ -63,6 +63,7 @@ public:
 	//Phase-2 Methods - END
 
 	static void CollectPanelInformation( bool dimensions = false);
+	static void CollectDefPointsPanels();
 	static std::list<Panel> vecPanels;
 	static void CollectPanelDetailsInformationFromWhitePaper(PanelWhitePaper& whitePaper);
 };

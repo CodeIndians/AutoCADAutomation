@@ -55,6 +55,8 @@ std::string Utilities::getFraction(double value)
 			return " 7/8";
 		if (value <= 15.0 / 16)
 			return " 7/8";
+		else
+			return "1";
 	}
 	return "";
 }
@@ -94,6 +96,11 @@ std::string Utilities::inchesToFeet(double value)
 	int feet = integerPart / 12;
 	int inches = integerPart % 12;
 	std::string fraction = Utilities::getUtils()->getFraction(decimalPart);
+	if (fraction == "1")
+	{
+		inches++;
+		fraction = "";
+	}
 	return std::to_string(feet) + "' " + std::to_string(inches) + fraction + "\"";
 }
 
