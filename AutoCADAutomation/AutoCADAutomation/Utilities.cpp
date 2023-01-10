@@ -92,7 +92,7 @@ COORDINATES Utilities::getMidPoint(BOUNDS& bound)
 std::string Utilities::inchesToFeet(double value)
 {
 	int integerPart = (int)value;
-	float decimalPart = value - (float)integerPart;
+	double decimalPart = value - (double)integerPart;
 	int feet = integerPart / 12;
 	int inches = integerPart % 12;
 	std::string fraction = Utilities::getUtils()->getFraction(decimalPart);
