@@ -817,10 +817,22 @@ void Panel::updateFFYPosition()
 	// logic for broken panels
 	else
 	{
-		std::sort(vecInteralPanelLines.begin(), vecInteralPanelLines.end());
+
+		std::sort(vecInteralPanelLines.begin(), vecInteralPanelLines.end(), [](const COORDINATES& point1, const COORDINATES& point2) {
+			if (Utilities::getUtils()->approximatelyEqual(point1.first, point2.first, 0.0001f))
+				return point1.second < point2.second;
+			return point1.first < point2.first;
+			});
+
+		vecInteralPanelLines.erase(std::unique(vecInteralPanelLines.begin(), vecInteralPanelLines.end()), vecInteralPanelLines.end());
+
 		panelFFYPosition = vecInteralPanelLines[0].second;
-		mInternalPanelBounds.first = vecInteralPanelLines[1];
-		mInternalPanelBounds.second = vecInteralPanelLines[vecInteralPanelLines.size() - 2];
+		if (mInternalPanelBounds.first.first == 0.0f && mInternalPanelBounds.first.second == 0.0f &&
+			mInternalPanelBounds.second.first == 0.0f && mInternalPanelBounds.second.second == 0.0f)
+		{
+			mInternalPanelBounds.first = vecInteralPanelLines[1];
+			mInternalPanelBounds.second = vecInteralPanelLines[vecInteralPanelLines.size() - 2];
+		}
 		internalPanelYOffset = mInternalPanelBounds.second.second;
 	}
 }
