@@ -31,6 +31,7 @@
 #pragma comment(lib,"shlwapi.lib")
 #include "shlobj.h"
 #include <comdef.h>
+#include "LicenseManager.h"
 
 using namespace std;
 using std::chrono::duration_cast;
@@ -38,67 +39,19 @@ using std::chrono::milliseconds;
 using std::chrono::seconds;
 using std::chrono::system_clock;
 
-static bool bValidLicense = false;
 extern "C" AcRx::AppRetCode acrxEntryPoint(AcRx::AppMsgCode msg, void* pkt)
-{
-	
-	TCHAR szPath[MAX_PATH];
-	
-	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szPath)))
-	{
-		PathAppend(szPath, _T("\\Autodesk\\AutoCAD 2021\\R24.0\\enu\\Support\\Autodesk.txt"));
-	}
-	std::ifstream myfile(szPath);
-	std::ofstream outFile;
-	string line;
-	int base = 10;
-	char* end;
-	_bstr_t b(szPath);
-	long long  millisec_since_epoch;
-	long long  millisec_since_epoch1;
-	long long savedTime;
-
-	string strCmd = "getmac";
-	string strFilename = "macaddress.txt";
-	string strMacID;
-
-	system((strCmd + ">" + strFilename).c_str());
-	string line1;
-
-	std::ifstream myfile1("macaddress.txt");
-
-	int i = 0;
-	if (myfile1.is_open()) {
-		while (getline(myfile1, line1)) {
-			if (i == 3)
-			{
-				strMacID = line1.substr(0, 17);
-				break;
-			}
-			i++;
-		}
-		myfile1.close();
-	}
-	DeleteFileA("macaddress.txt");
+{	
+	bool bValidLicence;
 	
 	switch (msg)
 	{
 	case AcRx::kInitAppMsg:
 
-		if (myfile.is_open()) {
-			getline(myfile, line);
-			myfile.close();
-		}
-
-		savedTime = strtoll(line.c_str(), &end, base);
-
-		/*if (strMacID != "54-14-F3-F3-D4-04")
-			bValidLicense = false;
-		else*/
-			bValidLicense = true;
-
-		if (!bValidLicense)
+		bValidLicence = LicenseManager::isValidLicense();
+		if (!bValidLicence)
 		{
+			::MessageBoxA(NULL, "You do not have a valid license to load Automation toolkit. \n Please contact the administrator for a valid license", "Automation Toolkit License", MB_OK | MB_ICONERROR| MB_SYSTEMMODAL);
+
 			acutPrintf(L"\nFailed to Load Automation Toolkit...\n");
 			return AcRx::kRetError;
 		}
@@ -125,7 +78,7 @@ extern "C" AcRx::AppRetCode acrxEntryPoint(AcRx::AppMsgCode msg, void* pkt)
 		break;
 
 	case AcRx::kUnloadAppMsg:
-		millisec_since_epoch1 = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+		/*millisec_since_epoch1 = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 		if (bValidLicense)
 		{
 			outFile.open(szPath, ios::ios_base::trunc);
@@ -134,7 +87,7 @@ extern "C" AcRx::AppRetCode acrxEntryPoint(AcRx::AppMsgCode msg, void* pkt)
 				outFile << millisec_since_epoch1;
 			}
 		}
-		outFile.close();
+		outFile.close();*/
 		acutPrintf(L"\nUnloading Automation Toolkit ....\n");
 		acedRegCmds->removeGroup(L"AutomationToolkit");
 		break;

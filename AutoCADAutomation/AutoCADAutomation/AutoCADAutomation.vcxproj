@@ -168,12 +168,14 @@
     <ClCompile Include="Reporting\ReportingRevealsClearance.cpp" />
     <ClCompile Include="Reporting\ReportingUnroundedLiftInserts.cpp" />
     <ClCompile Include="Reporting\ReportSimilarRigging.cpp" />
+    <ClCompile Include="LicenseManager.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutomationToolkit.h" />
     <ClInclude Include="CollectionHelper.h" />
     <ClInclude Include="DeadmanNotesHelper.h" />
+    <ClInclude Include="LicenseManager.h" />
     <ClInclude Include="InputBox.h" />
     <ClInclude Include="Panel.h" />
     <ClInclude Include="PanelBuilder.h" />
