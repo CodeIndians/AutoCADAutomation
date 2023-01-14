@@ -101,6 +101,11 @@ void ReportingExcel::UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel& p
 		excelObject.liftInserts[index] = std::to_string(liftInsert.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(liftInsert.first.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
+	for (auto& liftInsert : panel.vecEdgeLifts)
+	{
+		excelObject.liftInserts[index] = std::to_string(liftInsert.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(liftInsert.first.second - panel.getInternalPanelBounds().first.second);
+		index++;
+	}
 	index = 0;
 	for (auto& braceInsert : panel.vecBraceInserts)
 	{

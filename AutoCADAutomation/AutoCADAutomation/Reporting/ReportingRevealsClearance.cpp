@@ -49,6 +49,11 @@ void ReportingRevealsClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObjec
 		vecInsertCoordinates.push_back(liftInserts.first);
 	}
 
+	for (auto& liftInserts : panel.vecEdgeLifts)
+	{
+		vecInsertCoordinates.push_back(liftInserts.first);
+	}
+
 	for (auto& braceInserts : panel.vecBraceInserts)
 	{
 		vecInsertCoordinates.push_back(braceInserts);

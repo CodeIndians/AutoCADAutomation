@@ -362,7 +362,7 @@ void Panel::createDimensions(std::vector<BOUNDS>& horizontalBounds, std::vector<
 
 void Panel::updateRiggingType()
 {
-	if (vecLiftInserts.size() == 0)
+	if (vecLiftInserts.size() == 0 && vecEdgeLifts.size() == 0)
 	{
 		riggingType = "N/A";
 		return;
@@ -374,20 +374,36 @@ void Panel::updateRiggingType()
 		x_positions.insert(lifts.first.first);
 		y_positions.insert(lifts.first.second);
 	}
+	for (auto& lifts : vecEdgeLifts)
+	{
+		x_positions.insert(lifts.first.first);
+		y_positions.insert(lifts.first.second);
+	}
 	riggingType = "R" + std::to_string(y_positions.size()) + std::to_string(x_positions.size());
 }
 
 void Panel::filterCGLiftOpening()
 {
-	if (vecLiftInserts.size() == 0)
+	if (vecLiftInserts.size() == 0 && vecEdgeLifts.size() == 0)
 		return;
-	double radius = 0;
+	
+	// TODO: This logic might not be needed since circle size for the inserts are fixed
+	double radius = 0.0f;
 	if (vecLiftInserts.size() >= 2)
 	{
 		radius = vecLiftInserts[0].second;
 		if (vecLiftInserts[1].second > radius)
 			radius = vecLiftInserts[1].second;
 	}
+	if (vecEdgeLifts.size() >= 2)
+	{
+		radius = vecEdgeLifts[0].second;
+		if (vecEdgeLifts[1].second > radius)
+			radius = vecEdgeLifts[1].second;
+	}
+
+	radius = (radius == 0.0f) ? 4.0f : radius;
+
 	bool foundCgCircle = false;
 	for (auto& liftInsert : vecLiftInserts)
 	{

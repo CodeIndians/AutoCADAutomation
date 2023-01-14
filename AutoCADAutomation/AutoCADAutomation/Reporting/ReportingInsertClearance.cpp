@@ -60,6 +60,10 @@ void ReportingInsertClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObject
 		{
 			vecInsertCoordinates.push_back(liftInserts.first);
 		}
+		for (auto& liftInserts : panel.vecEdgeLifts)
+		{
+			vecInsertCoordinates.push_back(liftInserts.first);
+		}
 	}
 	else
 	{
