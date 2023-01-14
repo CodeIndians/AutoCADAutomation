@@ -32,7 +32,7 @@ public:
 	double getBoundsHeight(BOUNDS& bound);
 	COORDINATES getMidPoint(BOUNDS& bound);
 	std::string inchesToFeet(double value);		// convert from feet to inches fractional
-	bool approximatelyEqual(float a, float b, float epsilon = std::numeric_limits<double>::epsilon());
+	bool approximatelyEqual(double a, double b, double epsilon = 0.0001f);
 	double DistanceBetweenPoints(BOUNDS& bound);
 };
 

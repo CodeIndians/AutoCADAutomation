@@ -172,7 +172,8 @@ void CollectionHelper::CollectLinesWithAnAngle(AcDbEntity* entity, std::list<BOU
 			start = end;
 			end = temp;
 		}
-		if ((start->x < end->x) && (start->y < end->y)) // acute angled lines
+		if ((start->x < end->x) && !Utilities::getUtils()->approximatelyEqual(start->x,end->x) &&
+			(start->y < end->y) && !Utilities::getUtils()->approximatelyEqual(start->y, end->y)) // acute angled lines
 		{
 			BOUNDS bound;
 			bound.first.first = start->x;

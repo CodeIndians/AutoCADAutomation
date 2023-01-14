@@ -504,7 +504,7 @@ void Panel::projectToNearestVerticalInsert(double &x, double &y,std::vector<COOR
 	std::vector<double> matchingInsertsYPos;
 	for (auto& insert : inserts)
 	{
-		if(Utilities::getUtils()->approximatelyEqual(insert.first, x, std::numeric_limits<double>::epsilon()))
+		if(Utilities::getUtils()->approximatelyEqual(insert.first, x))
 			matchingInsertsYPos.push_back(insert.second);
 	}
 
@@ -514,7 +514,7 @@ void Panel::projectToNearestVerticalInsert(double &x, double &y,std::vector<COOR
 	{
 		for (auto& yPos : matchingInsertsYPos)
 		{
-			float distance = std::abs(y - yPos);
+			double distance = std::abs(y - yPos);
 			if (distance < minDistance)
 			{
 				finalYValue = yPos;
@@ -534,7 +534,7 @@ void Panel::projectToNearestHorizontalInsert(double& x, double& y, std::vector<C
 	std::vector<double> matchingInsertsXPos;
 	for (auto& insert : inserts)
 	{
-		if (Utilities::getUtils()->approximatelyEqual(insert.second, y, std::numeric_limits<double>::epsilon()))
+		if (Utilities::getUtils()->approximatelyEqual(insert.second, y))
 			matchingInsertsXPos.push_back(insert.first);
 	}
 
@@ -544,7 +544,7 @@ void Panel::projectToNearestHorizontalInsert(double& x, double& y, std::vector<C
 	{
 		for (auto& xPos : matchingInsertsXPos)
 		{
-			float distance = std::abs(x - xPos);
+			double distance = std::abs(x - xPos);
 			if (distance < minDistance)
 			{
 				finalXValue = xPos;
@@ -791,7 +791,7 @@ void Panel::detectInterferenceCheck()
 		for (auto& liftInsert : vecLiftInserts)
 		{
 			auto diff = std::abs(liftInsert.first.first - braceX);
-			if (diff < 12.0f && !Utilities::getUtils()->approximatelyEqual(diff,12.0, std::numeric_limits<double>::epsilon()))
+			if (diff < 12.0f && !Utilities::getUtils()->approximatelyEqual(diff,12.0))
 			{
 				bHasInterferenceInInserts = true;
 				break;
@@ -819,7 +819,7 @@ void Panel::updateFFYPosition()
 	{
 
 		std::sort(vecInteralPanelLines.begin(), vecInteralPanelLines.end(), [](const COORDINATES& point1, const COORDINATES& point2) {
-			if (Utilities::getUtils()->approximatelyEqual(point1.first, point2.first, 0.0001f))
+			if (Utilities::getUtils()->approximatelyEqual(point1.first, point2.first))
 				return point1.second < point2.second;
 			return point1.first < point2.first;
 			});

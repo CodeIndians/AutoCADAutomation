@@ -104,7 +104,7 @@ std::string Utilities::inchesToFeet(double value)
 	return std::to_string(feet) + "' " + std::to_string(inches) + fraction + "\"";
 }
 
-bool Utilities::approximatelyEqual(float a, float b, float epsilon )
+bool Utilities::approximatelyEqual(double a, double b, double epsilon )
 {
 	return fabs(a - b) <= ((fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
 }
