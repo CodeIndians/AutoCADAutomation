@@ -100,6 +100,11 @@ std::string Utilities::inchesToFeet(double value)
 	{
 		inches++;
 		fraction = "";
+		if (inches == 12)
+		{
+			feet++;
+			inches = 0;
+		}
 	}
 	return std::to_string(feet) + "' " + std::to_string(inches) + fraction + "\"";
 }
