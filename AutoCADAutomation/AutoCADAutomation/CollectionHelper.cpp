@@ -356,10 +356,18 @@ void CollectionHelper::CollectInternalPanels(AcDbEntity* entity)
 {
 	if ((wcscmp(entity->layer(), L"PANEL") == 0) )
 	{
-		if(wcscmp(entity->isA()->name(), L"AcDbPolyline") == 0)
-			CollectRectanglesFromPolyLines(entity, vecInternalPanels);
+		if (wcscmp(entity->isA()->name(), L"AcDbPolyline") == 0)
+		{
+			// skip red boxes
+			if(entity->colorIndex() != 1)
+				CollectRectanglesFromPolyLines(entity, vecInternalPanels);
+		}
 		if (wcscmp(entity->isA()->name(), L"AcDbLine") == 0)
-			CollectLines(entity, vecInternalPanelLines);
+		{
+			// skip red lines
+			if (entity->colorIndex() != 1)
+				CollectLines(entity, vecInternalPanelLines);
+		}
 	}
 }
 
