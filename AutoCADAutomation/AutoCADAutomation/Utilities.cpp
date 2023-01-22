@@ -119,3 +119,18 @@ double Utilities::DistanceBetweenPoints(BOUNDS& bound)
 	return sqrt(pow((bound.first.first - bound.second.first), 2) + pow((bound.first.second - bound.second.second), 2));
 
 }
+
+bool Utilities::isNullBound(BOUNDS& bounds)
+{
+	return ((bounds.first.first == 0.0f) && (bounds.first.second == 0.0f) &&
+		(bounds.second.first == 0.0f) && (bounds.second.second == 0.0f));
+}
+
+bool Utilities::isBoundWidthGreater(BOUNDS& lhs, BOUNDS& rhs)
+{
+	double lhsWidth = getBoundsWidth(lhs);
+	double rhsWidth = getBoundsWidth(rhs);
+	double lhsHeight = getBoundsHeight(lhs);
+	double rhsHeighth = getBoundsHeight(rhs);
+	return (lhsWidth > lhsWidth) || (lhsHeight > rhsHeighth);
+}

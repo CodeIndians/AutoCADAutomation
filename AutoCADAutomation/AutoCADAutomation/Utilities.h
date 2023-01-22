@@ -34,5 +34,7 @@ public:
 	std::string inchesToFeet(double value);		// convert from feet to inches fractional
 	bool approximatelyEqual(double a, double b, double epsilon = 0.0001f);
 	double DistanceBetweenPoints(BOUNDS& bound);
+	bool isNullBound(BOUNDS& bounds);
+	bool isBoundWidthGreater(BOUNDS& lhs, BOUNDS& rhs);
 };
 

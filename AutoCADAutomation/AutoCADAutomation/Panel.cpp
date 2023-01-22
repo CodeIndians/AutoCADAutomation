@@ -843,11 +843,14 @@ void Panel::updateFFYPosition()
 		vecInteralPanelLines.erase(std::unique(vecInteralPanelLines.begin(), vecInteralPanelLines.end()), vecInteralPanelLines.end());
 
 		panelFFYPosition = vecInteralPanelLines[0].second;
-		if (mInternalPanelBounds.first.first == 0.0f && mInternalPanelBounds.first.second == 0.0f &&
-			mInternalPanelBounds.second.first == 0.0f && mInternalPanelBounds.second.second == 0.0f)
+
+		BOUNDS tempBounds;
+		mInternalPanelBounds.first = vecInteralPanelLines[1];
+		mInternalPanelBounds.second = vecInteralPanelLines[vecInteralPanelLines.size() - 2];
+
+		if (Utilities::getUtils()->isNullBound(mInternalPanelBounds) && Utilities::getUtils()->isBoundWidthGreater(tempBounds,mInternalPanelBounds))
 		{
-			mInternalPanelBounds.first = vecInteralPanelLines[1];
-			mInternalPanelBounds.second = vecInteralPanelLines[vecInteralPanelLines.size() - 2];
+			mInternalPanelBounds = tempBounds;
 		}
 		internalPanelYOffset = mInternalPanelBounds.second.second;
 	}
