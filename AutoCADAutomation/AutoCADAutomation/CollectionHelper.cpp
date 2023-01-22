@@ -520,6 +520,7 @@ void CollectionHelper::PopulatePanelData(std::list<Panel>& panels)
 void CollectionHelper::ClearCollectionData()
 {
 	vecLiftInserts.clear();
+	vecEdgeLifts.clear();
 	vecBraceInserts.clear();
 	vecOpenings.clear();
 	vecFutureOpenings.clear();
