@@ -53,7 +53,7 @@ void ReportingReveals::UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel&
 	{
 		if (index >= 22)
 			break;
-		excelObject.reveals[index] = std::to_string(reveal.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string (reveal.first.second - panel.getInternalPanelBounds().first.second) +  delim + std::to_string(reveal.second.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string ( reveal.second.second - panel.getInternalPanelBounds().first.second);
+		excelObject.reveals[index] = Utilities::getUtils()->inchesToFeet(reveal.first.first - panel.getInternalPanelBounds().first.first) + delim + Utilities::getUtils()->inchesToFeet(reveal.first.second - panel.getInternalPanelBounds().first.second) +  delim + Utilities::getUtils()->inchesToFeet(reveal.second.first - panel.getInternalPanelBounds().first.first) + delim + Utilities::getUtils()->inchesToFeet( reveal.second.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
 }
