@@ -19,10 +19,10 @@ private:
 	struct ExcelSchema
 	{
 		std::string name;
-		std::string reveals[22];
+		std::string reveals[45];
 		ExcelSchema() : name("")
 		{
-			for (int i = 0; i < 22; i++)
+			for (int i = 0; i < 45; i++)
 				reveals[i] = ",,,";
 		}
 	};
