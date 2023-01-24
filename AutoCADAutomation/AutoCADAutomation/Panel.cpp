@@ -91,7 +91,7 @@ double Panel::getPanelHeight()
 
 double Panel::getPanelHeightBelowFF()
 {
-	return (panelFFYPosition - mInternalPanelBounds.first.second);
+	return (panelFFYPosition - mInternalPanelBounds.first.second) >= 0.0f ? (panelFFYPosition - mInternalPanelBounds.first.second) : 0.0f;
 }
 
 double Panel::getPanelHeightAboveFF()
