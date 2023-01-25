@@ -37,7 +37,7 @@ void ReportingExcel::InitializeHeader()
 		std::string brace = "Brace Insert ( B" + num + " )";
 		headerObject.braceInserts[i] = brace + "X Loc" + delim + brace + "Y Loc";
 	}
-	for (int i = 0; i < 22; i++)
+	for (int i = 0; i < 45; i++)
 	{
 		std::string reveal = "Reveal " + std::to_string(i + 1);
 		headerObject.reveals[i] = reveal + " X1" + delim + reveal + " Y1" + delim + reveal + " X2" + delim + reveal + "Y2";
@@ -75,7 +75,7 @@ void ReportingExcel::PrintLine(ExcelSchema& excelObject)
 	{
 		csvfile << excelObject.braceInserts[i] << delim;
 	}
-	for (int i = 0; i < 22; i++)
+	for (int i = 0; i < 45; i++)
 	{
 		csvfile << excelObject.reveals[i] << delim;
 	}
@@ -92,28 +92,33 @@ void ReportingExcel::UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel& p
 	int index = 0;
 	for (auto& opening : panel.vecOpenings)
 	{
-		excelObject.openings[index] = panel.getOpeningType(opening) + delim + Utilities::getUtils()->inchesToFeet(Utilities::getUtils()->getBoundsWidth(opening)) + delim + Utilities::getUtils()->inchesToFeet(Utilities::getUtils()->getBoundsHeight(opening)) + delim + std::to_string(opening.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(opening.first.second - panel.getInternalPanelBounds().first.second);
+		excelObject.openings[index] = panel.getOpeningType(opening) + delim + Utilities::getUtils()->inchesToFeet(Utilities::getUtils()->getBoundsWidth(opening)) + delim + Utilities::getUtils()->inchesToFeet(Utilities::getUtils()->getBoundsHeight(opening)) + delim + Utilities::getUtils()->inchesToFeet(opening.first.first - panel.getInternalPanelBounds().first.first) + delim + Utilities::getUtils()->inchesToFeet(opening.first.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
 	index = 0;
 	for (auto& liftInsert : panel.vecLiftInserts)
 	{
-		excelObject.liftInserts[index] = std::to_string(liftInsert.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(liftInsert.first.second - panel.getInternalPanelBounds().first.second);
+		excelObject.liftInserts[index] = Utilities::getUtils()->inchesToFeet(liftInsert.first.first - panel.getInternalPanelBounds().first.first) + delim + Utilities::getUtils()->inchesToFeet(liftInsert.first.second - panel.getInternalPanelBounds().first.second);
+		index++;
+	}
+	for (auto& liftInsert : panel.vecEdgeLifts)
+	{
+		excelObject.liftInserts[index] = Utilities::getUtils()->inchesToFeet(liftInsert.first.first - panel.getInternalPanelBounds().first.first) + delim + Utilities::getUtils()->inchesToFeet(liftInsert.first.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
 	index = 0;
 	for (auto& braceInsert : panel.vecBraceInserts)
 	{
-		excelObject.braceInserts[index] = std::to_string(braceInsert.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(braceInsert.second - panel.getInternalPanelBounds().first.second);
+		excelObject.braceInserts[index] = Utilities::getUtils()->inchesToFeet(braceInsert.first - panel.getInternalPanelBounds().first.first) + delim + Utilities::getUtils()->inchesToFeet(braceInsert.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
 	index = 0;
 	for (auto& reveal : panel.vecReveals)
 	{
 		// fix crashing of the panels 
-		if (index >= 22)
+		if (index >= 45)
 			break;
-		excelObject.reveals[index] = std::to_string(reveal.first.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(reveal.first.second - panel.getInternalPanelBounds().first.second) + delim + std::to_string(reveal.second.first - panel.getInternalPanelBounds().first.first) + delim + std::to_string(reveal.second.second - panel.getInternalPanelBounds().first.second);
+		excelObject.reveals[index] = Utilities::getUtils()->inchesToFeet(reveal.first.first - panel.getInternalPanelBounds().first.first) + delim + Utilities::getUtils()->inchesToFeet(reveal.first.second - panel.getInternalPanelBounds().first.second) + delim + Utilities::getUtils()->inchesToFeet(reveal.second.first - panel.getInternalPanelBounds().first.first) + delim + Utilities::getUtils()->inchesToFeet(reveal.second.second - panel.getInternalPanelBounds().first.second);
 		index++;
 	}
 }

@@ -92,7 +92,7 @@ COORDINATES Utilities::getMidPoint(BOUNDS& bound)
 std::string Utilities::inchesToFeet(double value)
 {
 	int integerPart = (int)value;
-	float decimalPart = value - (float)integerPart;
+	double decimalPart = value - (double)integerPart;
 	int feet = integerPart / 12;
 	int inches = integerPart % 12;
 	std::string fraction = Utilities::getUtils()->getFraction(decimalPart);
@@ -100,11 +100,16 @@ std::string Utilities::inchesToFeet(double value)
 	{
 		inches++;
 		fraction = "";
+		if (inches == 12)
+		{
+			feet++;
+			inches = 0;
+		}
 	}
 	return std::to_string(feet) + "' " + std::to_string(inches) + fraction + "\"";
 }
 
-bool Utilities::approximatelyEqual(float a, float b, float epsilon )
+bool Utilities::approximatelyEqual(double a, double b, double epsilon )
 {
 	return fabs(a - b) <= ((fabs(a) < fabs(b) ? fabs(b) : fabs(a)) * epsilon);
 }
@@ -113,4 +118,19 @@ double Utilities::DistanceBetweenPoints(BOUNDS& bound)
 {
 	return sqrt(pow((bound.first.first - bound.second.first), 2) + pow((bound.first.second - bound.second.second), 2));
 
+}
+
+bool Utilities::isNullBound(BOUNDS& bounds)
+{
+	return ((bounds.first.first == 0.0f) && (bounds.first.second == 0.0f) &&
+		(bounds.second.first == 0.0f) && (bounds.second.second == 0.0f));
+}
+
+bool Utilities::isBoundWidthGreater(BOUNDS& lhs, BOUNDS& rhs)
+{
+	double lhsWidth = getBoundsWidth(lhs);
+	double rhsWidth = getBoundsWidth(rhs);
+	double lhsHeight = getBoundsHeight(lhs);
+	double rhsHeighth = getBoundsHeight(rhs);
+	return (lhsWidth > lhsWidth) || (lhsHeight > rhsHeighth);
 }

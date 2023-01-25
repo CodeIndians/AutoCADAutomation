@@ -172,7 +172,8 @@ void CollectionHelper::CollectLinesWithAnAngle(AcDbEntity* entity, std::list<BOU
 			start = end;
 			end = temp;
 		}
-		if ((start->x < end->x) && (start->y < end->y)) // acute angled lines
+		if ((start->x < end->x) && !Utilities::getUtils()->approximatelyEqual(start->x,end->x) &&
+			(start->y < end->y) && !Utilities::getUtils()->approximatelyEqual(start->y, end->y)) // acute angled lines
 		{
 			BOUNDS bound;
 			bound.first.first = start->x;
@@ -355,10 +356,18 @@ void CollectionHelper::CollectInternalPanels(AcDbEntity* entity)
 {
 	if ((wcscmp(entity->layer(), L"PANEL") == 0) )
 	{
-		if(wcscmp(entity->isA()->name(), L"AcDbPolyline") == 0)
-			CollectRectanglesFromPolyLines(entity, vecInternalPanels);
+		if (wcscmp(entity->isA()->name(), L"AcDbPolyline") == 0)
+		{
+			// skip red boxes
+			if(entity->colorIndex() != 1)
+				CollectRectanglesFromPolyLines(entity, vecInternalPanels);
+		}
 		if (wcscmp(entity->isA()->name(), L"AcDbLine") == 0)
-			CollectLines(entity, vecInternalPanelLines);
+		{
+			// skip red lines
+			if (entity->colorIndex() != 1)
+				CollectLines(entity, vecInternalPanelLines);
+		}
 	}
 }
 
@@ -511,6 +520,7 @@ void CollectionHelper::PopulatePanelData(std::list<Panel>& panels)
 void CollectionHelper::ClearCollectionData()
 {
 	vecLiftInserts.clear();
+	vecEdgeLifts.clear();
 	vecBraceInserts.clear();
 	vecOpenings.clear();
 	vecFutureOpenings.clear();

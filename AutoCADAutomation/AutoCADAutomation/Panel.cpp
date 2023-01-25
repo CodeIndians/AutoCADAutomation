@@ -91,7 +91,7 @@ double Panel::getPanelHeight()
 
 double Panel::getPanelHeightBelowFF()
 {
-	return (panelFFYPosition - mInternalPanelBounds.first.second);
+	return (panelFFYPosition - mInternalPanelBounds.first.second) >= 0.0f ? (panelFFYPosition - mInternalPanelBounds.first.second) : 0.0f;
 }
 
 double Panel::getPanelHeightAboveFF()
@@ -362,7 +362,7 @@ void Panel::createDimensions(std::vector<BOUNDS>& horizontalBounds, std::vector<
 
 void Panel::updateRiggingType()
 {
-	if (vecLiftInserts.size() == 0)
+	if (vecLiftInserts.size() == 0 && vecEdgeLifts.size() == 0)
 	{
 		riggingType = "N/A";
 		return;
@@ -374,20 +374,36 @@ void Panel::updateRiggingType()
 		x_positions.insert(lifts.first.first);
 		y_positions.insert(lifts.first.second);
 	}
+	for (auto& lifts : vecEdgeLifts)
+	{
+		x_positions.insert(lifts.first.first);
+		y_positions.insert(lifts.first.second);
+	}
 	riggingType = "R" + std::to_string(y_positions.size()) + std::to_string(x_positions.size());
 }
 
 void Panel::filterCGLiftOpening()
 {
-	if (vecLiftInserts.size() == 0)
+	if (vecLiftInserts.size() == 0 && vecEdgeLifts.size() == 0)
 		return;
-	double radius = 0;
+	
+	// TODO: This logic might not be needed since circle size for the inserts are fixed
+	double radius = 0.0f;
 	if (vecLiftInserts.size() >= 2)
 	{
 		radius = vecLiftInserts[0].second;
 		if (vecLiftInserts[1].second > radius)
 			radius = vecLiftInserts[1].second;
 	}
+	if (vecEdgeLifts.size() >= 2)
+	{
+		radius = vecEdgeLifts[0].second;
+		if (vecEdgeLifts[1].second > radius)
+			radius = vecEdgeLifts[1].second;
+	}
+
+	radius = (radius == 0.0f) ? 4.0f : radius;
+
 	bool foundCgCircle = false;
 	for (auto& liftInsert : vecLiftInserts)
 	{
@@ -504,7 +520,7 @@ void Panel::projectToNearestVerticalInsert(double &x, double &y,std::vector<COOR
 	std::vector<double> matchingInsertsYPos;
 	for (auto& insert : inserts)
 	{
-		if(Utilities::getUtils()->approximatelyEqual(insert.first, x, std::numeric_limits<double>::epsilon()))
+		if(Utilities::getUtils()->approximatelyEqual(insert.first, x))
 			matchingInsertsYPos.push_back(insert.second);
 	}
 
@@ -514,7 +530,7 @@ void Panel::projectToNearestVerticalInsert(double &x, double &y,std::vector<COOR
 	{
 		for (auto& yPos : matchingInsertsYPos)
 		{
-			float distance = std::abs(y - yPos);
+			double distance = std::abs(y - yPos);
 			if (distance < minDistance)
 			{
 				finalYValue = yPos;
@@ -534,7 +550,7 @@ void Panel::projectToNearestHorizontalInsert(double& x, double& y, std::vector<C
 	std::vector<double> matchingInsertsXPos;
 	for (auto& insert : inserts)
 	{
-		if (Utilities::getUtils()->approximatelyEqual(insert.second, y, std::numeric_limits<double>::epsilon()))
+		if (Utilities::getUtils()->approximatelyEqual(insert.second, y))
 			matchingInsertsXPos.push_back(insert.first);
 	}
 
@@ -544,7 +560,7 @@ void Panel::projectToNearestHorizontalInsert(double& x, double& y, std::vector<C
 	{
 		for (auto& xPos : matchingInsertsXPos)
 		{
-			float distance = std::abs(x - xPos);
+			double distance = std::abs(x - xPos);
 			if (distance < minDistance)
 			{
 				finalXValue = xPos;
@@ -791,7 +807,7 @@ void Panel::detectInterferenceCheck()
 		for (auto& liftInsert : vecLiftInserts)
 		{
 			auto diff = std::abs(liftInsert.first.first - braceX);
-			if (diff < 12.0f && !Utilities::getUtils()->approximatelyEqual(diff,12.0, std::numeric_limits<double>::epsilon()))
+			if (diff < 12.0f && !Utilities::getUtils()->approximatelyEqual(diff,12.0))
 			{
 				bHasInterferenceInInserts = true;
 				break;
@@ -817,10 +833,25 @@ void Panel::updateFFYPosition()
 	// logic for broken panels
 	else
 	{
-		std::sort(vecInteralPanelLines.begin(), vecInteralPanelLines.end());
+
+		std::sort(vecInteralPanelLines.begin(), vecInteralPanelLines.end(), [](const COORDINATES& point1, const COORDINATES& point2) {
+			if (Utilities::getUtils()->approximatelyEqual(point1.first, point2.first))
+				return point1.second < point2.second;
+			return point1.first < point2.first;
+			});
+
+		vecInteralPanelLines.erase(std::unique(vecInteralPanelLines.begin(), vecInteralPanelLines.end()), vecInteralPanelLines.end());
+
 		panelFFYPosition = vecInteralPanelLines[0].second;
+
+		BOUNDS tempBounds;
 		mInternalPanelBounds.first = vecInteralPanelLines[1];
 		mInternalPanelBounds.second = vecInteralPanelLines[vecInteralPanelLines.size() - 2];
+
+		if (Utilities::getUtils()->isNullBound(mInternalPanelBounds) && Utilities::getUtils()->isBoundWidthGreater(tempBounds,mInternalPanelBounds))
+		{
+			mInternalPanelBounds = tempBounds;
+		}
 		internalPanelYOffset = mInternalPanelBounds.second.second;
 	}
 }
