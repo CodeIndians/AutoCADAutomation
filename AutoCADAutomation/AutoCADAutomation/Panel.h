@@ -31,6 +31,7 @@ class Panel
 {
 private:
 	BOUNDS bounds;
+	BOUNDS rebarBounds;
 	BOUNDS mPanelNameBounds;
 	BOUNDS mNumRequiredBounds;
 	std::string panelName;
@@ -138,6 +139,7 @@ public:
 	BOUNDS& getPanelNameBounds();
 	BOUNDS& getDetailLableBounds();
 	BOUNDS& getNumRequiredBounds();
+	BOUNDS& getRebarLabelBounds();
 	double getInternalPanelYOffset();
 	std::string& getPanelName();
 	std::string& getNumRequired() { return numRequired; }
