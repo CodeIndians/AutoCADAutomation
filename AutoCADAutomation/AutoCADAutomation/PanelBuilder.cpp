@@ -82,9 +82,10 @@ void PanelBuilder::buildLabels(std::list<LABELTEXT>& textLabels)
 			ptrPanel->setNumRequired(textLabel.first);
 
 		// collect rebar labels
-		if (ptrPanel->isElementWithinPanel(textLabel.second))
+		if (Utilities::getUtils()->boundCheck(ptrPanel->getRebarLabelBounds(), textLabel.second))
 		{
-			if (textLabel.first.length() > 0 && textLabel.first[0] == '(')
+			// use the length > 20 to not to collect false labels 
+			if (textLabel.first.length() > 20 && textLabel.first[0] == '(')
 			{
 				if (textLabel.second.second <= ptrPanel->getInternalPanelYOffset())
 					ptrPanel->addRebarLabels(textLabel, true); // collect rebar labels inside panel

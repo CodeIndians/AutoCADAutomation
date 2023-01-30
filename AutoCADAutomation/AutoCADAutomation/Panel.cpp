@@ -21,9 +21,14 @@
 Panel::Panel(BOUNDS boundinfo)
 {
 	bounds = boundinfo;
+	rebarBounds = boundinfo;
 	internalPanelYOffset = (bounds.first.second + bounds.first.second) / 2;
 	panelFFYPosition = 0.0f;
 	bounds.second.second -= 250.0f; // panel texts below panel fix
+	// set the rebar label collection bounds correctly
+	rebarBounds.second.second -= 50.0f; 
+	rebarBounds.first.first += 150.0f;
+	rebarBounds.second.first += 150.0f;
 	mOrigin = bounds.first;
 	calculatePanelNameBounds();
 	calculateDetailLabelsBounds();
@@ -702,6 +707,11 @@ bool Panel::areRebarTextsMatching()
 	std::list<LABELTEXT> outsideRebarsLabelCopy;
 	std::copy(vecRebarLabelsOutsideInternalPanel.begin(), vecRebarLabelsOutsideInternalPanel.end(), std::back_inserter(outsideRebarsLabelCopy));
 	bool matching = true;
+	if (vecRebarLabelsOutsideInternalPanel.size() == 0 && vecRebarLabelsInsideInternalPanel.size() > 0)
+	{
+		std::wstring widestr = std::wstring(panelName.begin(), panelName.end()) + std::wstring( L" outer labels are not found");
+		acutPrintf(widestr.c_str());
+	}
 	for (auto& insideLabel : vecRebarLabelsInsideInternalPanel)
 	{
 		if (!matching)
@@ -768,6 +778,11 @@ BOUNDS& Panel::getDetailLableBounds()
 BOUNDS& Panel::getNumRequiredBounds()
 {
 	return mNumRequiredBounds;
+}
+
+BOUNDS& Panel::getRebarLabelBounds()
+{
+	return rebarBounds;
 }
 
 double Panel::getInternalPanelYOffset()
