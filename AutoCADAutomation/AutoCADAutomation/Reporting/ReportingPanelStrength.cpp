@@ -48,14 +48,12 @@ void ReportingPanelStrength::UpdateExcelDataFromPanel(ExcelSchema& excelObject, 
 	double dPanelXHigh = bPanelBounds.second.first;
 	double dPanelYHigh = bPanelBounds.second.second;
 	bool bWeakPanel = false;
-	double dPanelCGx = panel.GetCG().first.first;
-	double dPanelCGy = panel.GetCG().first.second;
+	COORDINATES cgPoint = panel.GetCG().first;
 
 	//Panel strength computation
 	for (auto& opening : panel.vecOpenings)
 	{
 		// Check if the panel is coinciding the bottom edge.
-		
 		if (m_utils->approximatelyEqual(opening.first.second, dPanelYLow) || (opening.first.second < dPanelYLow))
 		{
 			if (m_utils->approximatelyEqual(opening.first.first, dPanelXLow) || m_utils->approximatelyEqual(opening.second.first , dPanelXHigh))
@@ -67,15 +65,19 @@ void ReportingPanelStrength::UpdateExcelDataFromPanel(ExcelSchema& excelObject, 
 					break;
 				}
 			}
-				// if distance between CG and the opening is < 1 feet - Weak Panel
-			if ((abs((opening.first.first - dPanelCGx)) < 12) || (abs((opening.second.first - dPanelCGx)) < 12))
+			
+			// compute the opening with 1 feet extended side 
+			BOUNDS oneFeetExtendedBound = opening;
+			oneFeetExtendedBound.first.first -= 12;
+			oneFeetExtendedBound.second.first += 12;
+			oneFeetExtendedBound.second.second += 12;
+
+			if (m_utils->boundCheck(oneFeetExtendedBound, cgPoint))
 			{
 				bWeakPanel = true;
 				break;
 			}
-			
 		}
-
 	}
 	excelObject.status = bWeakPanel? "Weak": "Strong";
 }
