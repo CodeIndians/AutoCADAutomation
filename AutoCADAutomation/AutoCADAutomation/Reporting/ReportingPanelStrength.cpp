@@ -58,13 +58,19 @@ void ReportingPanelStrength::UpdateExcelDataFromPanel(ExcelSchema& excelObject, 
 		
 		if (m_utils->approximatelyEqual(opening.first.second, dPanelYLow) || (opening.first.second < dPanelYLow))
 		{
-			// if opening width is greater than 40% of bottom leg width - weak panel
-			if ((opening.first.first - opening.second.first) / (dPanelXLow - dPanelXHigh) > 0.4)
+			if (m_utils->approximatelyEqual(opening.first.first, dPanelXLow) || m_utils->approximatelyEqual(opening.second.first , dPanelXHigh))
+			{
+				// if opening width is greater than 40% of bottom leg width - weak panel
+				if ((opening.first.first - opening.second.first) / (dPanelXLow - dPanelXHigh) > 0.4)
+					bWeakPanel = true;
+			}
+				// if distance between CG and the opening is < 1 feet - Weak Panel
+			if ((abs((opening.first.first - dPanelCGx)) < 12) || (abs((opening.second.first - dPanelCGx)) < 12))
+			{
 				bWeakPanel = true;
-
-			// if distance between CG and the opening is < 1 feet - Weak Panel
-			if  ( (abs((opening.first.first - dPanelCGx)) < 12 ) || (abs((opening.second.first - dPanelCGx)) < 12) )
-				bWeakPanel = true;
+				break;
+			}
+			
 		}
 
 	}
