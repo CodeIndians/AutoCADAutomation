@@ -83,7 +83,7 @@ void ReportingInsertClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObject
 		double dPanelYHigh_Range = dPanelYHigh - m_PanelClearance;
 
 		// if within panel - good else bad
-		if (!(inserts.first > dPanelXLow_Range && inserts.first < dPanelXHigh_Range && inserts.second > dPanelYLow_Range && inserts.second < dPanelYHigh_Range))
+		if (!(inserts.first >= dPanelXLow_Range && inserts.first <= dPanelXHigh_Range && inserts.second >= dPanelYLow_Range && inserts.second <= dPanelYHigh_Range))
 		{
 			bGoodPanel = false;
 			break;
@@ -91,10 +91,10 @@ void ReportingInsertClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObject
 
 		for (auto& opening : panel.vecOpenings)
 		{
-			double dLowX = opening.first.first - m_PanelClearance;
-			double dHighX = opening.second.first + m_PanelClearance;
-			double dLowY = opening.first.second - m_PanelClearance;
-			double dHighY = opening.second.second + m_PanelClearance;
+			double dLowX = opening.first.first - m_OpeningClearance;
+			double dHighX = opening.second.first + m_OpeningClearance;
+			double dLowY = opening.first.second - m_OpeningClearance;
+			double dHighY = opening.second.second + m_OpeningClearance;
 
 			if (inserts.first > dLowX && inserts.first < dHighX && inserts.second > dLowY && inserts.second < dHighY)
 			{
