@@ -65,11 +65,15 @@ void ReportingRevealsClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObjec
 
 		for (auto& reveal : panel.vecReveals)
 		{
-			// Vertical Distance
-			if ((abs((inserts.second - reveal.first.second)) < 9) || (abs((inserts.second - reveal.second.second)) < 9))
+			// (Is insert within range of the reveal
+			if ((reveal.first.first < inserts.first && reveal.second.first > inserts.first) || (reveal.first.first > inserts.first && reveal.second.first < inserts.first))
 			{
-				bGoodPanel = false;
-				break;
+				// Vertical Distance
+				if ((abs((inserts.second - reveal.first.second)) < m_ClearanceValue) || (abs((inserts.second - reveal.second.second)) < m_ClearanceValue))
+				{
+					bGoodPanel = false;
+					break;
+				}
 			}
 		}
 
@@ -80,8 +84,9 @@ void ReportingRevealsClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObjec
 	excelObject.status = bGoodPanel ? "Good" : "Bad";
 }
 
-ReportingRevealsClearance::ReportingRevealsClearance(std::list<Panel>& vecPanels)
+ReportingRevealsClearance::ReportingRevealsClearance(std::list<Panel>& vecPanels, int iClearanceVal)
 {
+	m_ClearanceValue = iClearanceVal;
 	m_utils = Utilities::getUtils();
 	mPanels = vecPanels;
 	auto location = fileLocation + drawingName + "_"  + "Reveals_Clerance_" + currentTime() + ".csv";

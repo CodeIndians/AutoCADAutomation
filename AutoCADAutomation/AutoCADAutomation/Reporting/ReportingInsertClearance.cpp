@@ -76,7 +76,33 @@ void ReportingInsertClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObject
 	// Compare each insert with the panel boundary as well as the openings boundary
 	for (auto& inserts : vecInsertCoordinates)
 	{
-		// Horizontal Distance
+		// Build a custom range for panel
+		double dPanelXLow_Range = dPanelXLow + m_PanelClearance;
+		double dPanelXHigh_Range = dPanelXHigh - m_PanelClearance;
+		double dPanelYLow_Range = dPanelYLow + m_PanelClearance;
+		double dPanelYHigh_Range = dPanelYHigh - m_PanelClearance;
+
+		// if within panel - good else bad
+		if (!(inserts.first > dPanelXLow_Range && inserts.first < dPanelXHigh_Range && inserts.second > dPanelYLow_Range && inserts.second < dPanelYHigh_Range))
+		{
+			bGoodPanel = false;
+			break;
+		}
+
+		for (auto& opening : panel.vecOpenings)
+		{
+			double dLowX = opening.first.first - m_PanelClearance;
+			double dHighX = opening.second.first + m_PanelClearance;
+			double dLowY = opening.first.second - m_PanelClearance;
+			double dHighY = opening.second.second + m_PanelClearance;
+
+			if (inserts.first > dLowX && inserts.first < dHighX && inserts.second > dLowY && inserts.second < dHighY)
+			{
+				bGoodPanel = false;
+				break;
+			}
+		}
+		/*// Horizontal Distance
 		if ((abs((inserts.first - dPanelXLow)) < m_PanelClearance) || (abs((inserts.first - dPanelXHigh)) < m_PanelClearance))
 		{
 			bGoodPanel = false;
@@ -88,8 +114,8 @@ void ReportingInsertClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObject
 		{
 			bGoodPanel = false;
 			break;
-		}
-
+		}*/
+		/*
 		for (auto& opening : panel.vecOpenings)
 		{
 			// Horizontal Distance
@@ -105,7 +131,7 @@ void ReportingInsertClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObject
 				bGoodPanel = false;
 				break;
 			}
-		}
+		}*/
 
 		if (!bGoodPanel)
 			break;

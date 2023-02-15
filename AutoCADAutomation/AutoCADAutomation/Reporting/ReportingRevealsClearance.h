@@ -22,6 +22,7 @@ private:
 		std::string status;
 	};
 	ExcelSchema headerObject;
+	int m_ClearanceValue;
 protected:
 	void InitializeHeader();
 	void PrintHeader();
@@ -31,6 +32,6 @@ protected:
 	Utilities* m_utils;
 
 public:
-	explicit ReportingRevealsClearance(std::list<Panel>& vecPanels);
+	explicit ReportingRevealsClearance(std::list<Panel>& vecPanels, int iClearanceValue);
 	~ReportingRevealsClearance();
 };

@@ -609,8 +609,16 @@ void AutomationToolkit::InsertsDistFromReveals()
 	{
 		CollectPanelInformation(false);
 
+		char title[] = "Enter distances in inches for Inserts and  Reveals Clearance validation";
+		char propmt[] = "Reveals Clearance";
+		char defalut[] = "9";
+		char* result = InputBox(title, propmt, defalut);
+
+		std::string str(result);
+		int j = atoi(str.c_str());
+		
 		// print data
-		ReportingBase* report = new ReportingRevealsClearance(vecPanels);
+		ReportingBase* report = new ReportingRevealsClearance(vecPanels, j);
 		report->ReportData();
 		delete report;
 

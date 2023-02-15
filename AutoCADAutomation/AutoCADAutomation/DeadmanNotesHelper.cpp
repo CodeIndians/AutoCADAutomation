@@ -63,9 +63,10 @@ void DeadmanNotesHelper::PlaceLabels()
 		
 		
 		
+		std::string tempString = panel.panelDetailsMap["BRACE TO"];
 
 		// Condition 2 - Wall connection - T5A-HVY | Condition 3 - Wall connection - T6A
-		if (panel.panelDetailsMap["BRACE WALL CONN."] == " T5A-HVY" || panel.panelDetailsMap["BRACE WALL CONN."] == " T6A" || panel.panelDetailsMap["BRACE WALL CONN."] == " T5A")
+		if (tempString.find("DEADMAN") != tempString.npos && (panel.panelDetailsMap["BRACE WALL CONN."] == " T5A-HVY" || panel.panelDetailsMap["BRACE WALL CONN."] == " T6A" || panel.panelDetailsMap["BRACE WALL CONN."] == " T5A"))
 		{
 			BOUNDS bPanelBounds = panel.getPanelNameBounds();
 			double dDefPointsX = bPanelBounds.first.first - 745;
