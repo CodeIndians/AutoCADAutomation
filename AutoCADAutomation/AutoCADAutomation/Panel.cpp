@@ -365,6 +365,23 @@ void Panel::createDimensions(std::vector<BOUNDS>& horizontalBounds, std::vector<
 	}
 }
 
+COORDINATES Panel::getAnchorPositionForRebarPlacement()
+{
+	COORDINATES anchorPosition = COORDINATES();
+
+	// The anchor point for each panel is the position of the brace id detail label
+	std::string validateString = "BRACE ID: ";
+	for (auto& detailLabel : vecDetailLabels)
+	{
+		if (detailLabel.first.find(validateString) != std::string::npos)
+		{
+			anchorPosition = detailLabel.second;
+			break;
+		}
+	}
+	return anchorPosition;
+}
+
 void Panel::updateRiggingType()
 {
 	if (vecLiftInserts.size() == 0 && vecEdgeLifts.size() == 0)

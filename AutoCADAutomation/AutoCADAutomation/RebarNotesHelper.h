@@ -30,9 +30,9 @@ public:
 	void PlaceLabels();
 	void CreateCSVFile();
 	bool ParseCSVFile();
-	void ComputeLabelConnectPoints(Panel& panel, std::vector<AcGePoint3d>& connectPoints);
-	void PlaceBoxAndLines(int iLegNo, double dPanelXLow, double dPanelYLow, AcDbBlockTableRecordPointer& pBTR);
-	void ProcessRebars(std:: vector<std::string> labels, std::vector<std::string> contents, int iLegNo, Panel& panel, std::vector<AcGePoint3d>& connectPoints);
+	void ComputeLabelConnectPoints(Panel& panel, std::vector<AcGePoint3d>& connectPoints, std::vector<AcGePoint3d>& internalConnectPoints);
+	void PlaceBoxAndLines(int iLegNo, std::vector<AcGePoint3d>& connectPoints, std::vector<AcGePoint3d>& internalConnectPoints, AcDbBlockTableRecordPointer& pBTR);
+	void ProcessRebars(std:: vector<std::string> labels, std::vector<std::string> contents, int iLegNo, Panel& panel, std::vector<AcGePoint3d>& connectPoints, std::vector<AcGePoint3d>& internalConnectPoints);
 
 private:
 	struct RebarLeg

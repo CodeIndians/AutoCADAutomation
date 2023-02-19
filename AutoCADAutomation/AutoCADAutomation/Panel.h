@@ -171,6 +171,9 @@ public:
 	//TODO : move dimensions logic into a different class
 	//void create dimensions
 	void createDimensions(std::vector<BOUNDS>& horizontalBounds, std::vector<BOUNDS>& verticalBounds, AcString layer);
+
+	//Rebar notes placement helper function
+	COORDINATES getAnchorPositionForRebarPlacement();
 	
 };
 

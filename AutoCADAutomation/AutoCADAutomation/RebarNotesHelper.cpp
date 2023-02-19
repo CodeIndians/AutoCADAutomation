@@ -51,9 +51,10 @@ void RebarNotesHelper::PlaceLabels()
 	{
 		int iPanel = 1; 
 		int iLegNo = 1;
-		vector<AcGePoint3d>connectPoints;
+		vector<AcGePoint3d> connectPoints; // points where label points are located.
+		vector<AcGePoint3d> internalConnectPoints; // point from which line has to be drawn from the panel.
 
-		ComputeLabelConnectPoints(panel, connectPoints);
+		ComputeLabelConnectPoints(panel, connectPoints, internalConnectPoints);
 
 		if (panel.vecRebarLabelsOutsideInternalPanel.size() > 0)
 		{
@@ -65,7 +66,7 @@ void RebarNotesHelper::PlaceLabels()
 				{
 					if (rebarLabels.size() > 0)
 					{
-						ProcessRebars(rebarLabels, m_VecContent[iPanel], iLegNo, panel, connectPoints);
+						ProcessRebars(rebarLabels, m_VecContent[iPanel], iLegNo, panel, connectPoints,internalConnectPoints);
 
 						// empty the collection for the next label
 						iLegNo++;
@@ -82,7 +83,7 @@ void RebarNotesHelper::PlaceLabels()
 
 				if (iLabelCount == panel.vecRebarLabelsOutsideInternalPanel.size())
 				{
-					ProcessRebars(rebarLabels, m_VecContent[iPanel], iLegNo, panel, connectPoints);
+					ProcessRebars(rebarLabels, m_VecContent[iPanel], iLegNo, panel, connectPoints, internalConnectPoints);
 				}
 
 			}
@@ -165,152 +166,255 @@ bool RebarNotesHelper::ParseCSVFile()
 
 }
 
-void RebarNotesHelper::ComputeLabelConnectPoints(Panel& panel, vector<AcGePoint3d>& connectPoints)
+void RebarNotesHelper::ComputeLabelConnectPoints(Panel& panel, vector<AcGePoint3d>& connectPoints, vector<AcGePoint3d>& internalConnectPoints)
 {
-	BOUNDS bPanelBounds = panel.getInternalPanelBounds();
-	double dPanelXLow = bPanelBounds.first.first;
-	double dPanelYLow = bPanelBounds.first.second;
+	// Connect points are computed from a fixed detail label and are placed at the def point corners 
+	COORDINATES anchorPositon = panel.getAnchorPositionForRebarPlacement();
 
+	BOUNDS panelBounds = panel.getInternalPanelBounds();
 
-	connectPoints.push_back(AcGePoint3d((dPanelXLow - 198), (dPanelYLow + 108), 0));
-	//connectPoints.push_back(AcGePoint3d((dPanelXLow - 202), (dPanelYLow + 95), 0));
-	//connectPoints.push_back(AcGePoint3d((dPanelXLow - 120), (dPanelYLow + 414), 0));
-	//connectPoints.push_back(AcGePoint3d((dPanelXLow + 18), (dPanelYLow + 95), 0));
+	COORDINATES leftMidPoint;
+	COORDINATES internalLeftMidPoint;
+	leftMidPoint.first = anchorPositon.first - 230.0f;
+	leftMidPoint.second = anchorPositon.second + 260.0f;
 
-	connectPoints.push_back(AcGePoint3d((dPanelXLow - 78), (dPanelYLow - 45), 0));
-	//connectPoints.push_back(AcGePoint3d((dPanelXLow - 87), (dPanelYLow - 42), 0));
-	//connectPoints.push_back(AcGePoint3d((dPanelXLow + 223), (dPanelYLow -121), 0));
-	//connectPoints.push_back(AcGePoint3d((dPanelXLow + 223), (dPanelYLow + 71), 0));
+	COORDINATES bottomMidPoint;
+	COORDINATES internalBottomMidPoint;
+	bottomMidPoint.first = anchorPositon.first - 95.0f;
+	bottomMidPoint.second = anchorPositon.second + 70.0f;
 
-	connectPoints.push_back(AcGePoint3d((dPanelXLow + 413), (dPanelYLow + 108), 0));
-	//connectPoints.push_back(AcGePoint3d((dPanelXLow + 403), (dPanelYLow + 95), 0));
-	//connectPoints.push_back(AcGePoint3d((dPanelXLow + 486), (dPanelYLow + 416), 0));
-	//connectPoints.push_back(AcGePoint3d((dPanelXLow + 301), (dPanelYLow + 95), 0));
+	COORDINATES rightMidPoint;
+	COORDINATES internalrightMidPoint;
+	rightMidPoint.first = anchorPositon.first + 440.0f;
+	rightMidPoint.second = anchorPositon.second + 260.0f;
 
-	// Rectangles
+	// calculate the number of strips
+	int numStrips = panel.vecRebarLabelsOutsideInternalPanel.size() / 2;
 
-}
-
-void RebarNotesHelper::PlaceBoxAndLines(int iLegNo, double dPanelXLow, double dPanelYLow, AcDbBlockTableRecordPointer& pBTR)
-{
-	switch (iLegNo) {
-
-	case 1:
+	if (numStrips > 0)
 	{
-		AcDbLine * pLine1 = new AcDbLine();
-		pLine1->setStartPoint(AcGePoint3d((dPanelXLow - 202), (dPanelYLow + 95), 0));
-		pLine1->setEndPoint(AcGePoint3d((dPanelXLow - 202), (dPanelYLow + 414), 0));
-		pBTR->appendAcDbEntity(pLine1);
-		pLine1->close();
+		std::vector<BOUNDS> panelOpenings;
 
-		AcDbLine* pLine2 = new AcDbLine();
-		pLine2->setStartPoint(AcGePoint3d((dPanelXLow - 202), (dPanelYLow + 414), 0));
-		pLine2->setEndPoint(AcGePoint3d((dPanelXLow - 120), (dPanelYLow + 414), 0));
-		pBTR->appendAcDbEntity(pLine2);
-		pLine2->close();
+		// collect all the openings
+		for (auto& opening : panel.vecOpenings)
+		{
+			panelOpenings.push_back(opening);
+		}
+		for (auto& opening : panel.vecFutureOpenings)
+		{
+			panelOpenings.push_back(opening);
+		}
 
-		AcDbLine* pLine3 = new AcDbLine();
-		pLine3->setStartPoint(AcGePoint3d((dPanelXLow - 120), (dPanelYLow + 414), 0));
-		pLine3->setEndPoint(AcGePoint3d((dPanelXLow - 120), (dPanelYLow + 95), 0));
-		pBTR->appendAcDbEntity(pLine3);
-		pLine3->close();
+		// sort based on y-position of the lowest bound
+		std::sort(panelOpenings.begin(), panelOpenings.end(), [](const BOUNDS& bound1, const BOUNDS& bound2) {
+			return bound1.first.second < bound2.first.second;
+			});
 
-		AcDbLine* pLine4 = new AcDbLine();
-		pLine4->setStartPoint(AcGePoint3d((dPanelXLow - 202), (dPanelYLow + 95), 0));
-		pLine4->setEndPoint(AcGePoint3d((dPanelXLow + 18), (dPanelYLow + 95), 0));
-		pBTR->appendAcDbEntity(pLine4);
-		pLine4->close();
+		// two strips case 
+		if (numStrips == 2 && panelOpenings.size() > 0)
+		{
+			auto opening = panelOpenings[0];
 
-		AcDbLine* pLine5 = new AcDbLine();
-		pLine5->setStartPoint(AcGePoint3d((dPanelXLow + 16), (dPanelYLow + 93), 0));
-		pLine5->setEndPoint(AcGePoint3d((dPanelXLow + 20), (dPanelYLow + 97), 0));
-		pBTR->appendAcDbEntity(pLine5);
-		pLine5->close();
-	}
-		break;
+			// Find a point between opening and left panel bound
+			internalLeftMidPoint.first = (panelBounds.first.first + opening.first.first) / 2;
+			internalLeftMidPoint.second = (opening.first.second + opening.second.second) / 2;
 
-	case 2:
-	{
-		AcDbLine * pLine1 = new AcDbLine();
-		pLine1->setStartPoint(AcGePoint3d((dPanelXLow - 87), (dPanelYLow - 42), 0));
-		pLine1->setEndPoint(AcGePoint3d((dPanelXLow - 87), (dPanelYLow - 121), 0));
-		pBTR->appendAcDbEntity(pLine1);
-		pLine1->close();
+			// Find a point between opening and right panel bound
+			internalrightMidPoint.first = (panelBounds.second.first + opening.second.first) / 2;
+			internalrightMidPoint.second = (opening.first.second + opening.second.second) / 2;
+		}
 
-		AcDbLine* pLine2 = new AcDbLine();
-		pLine2->setStartPoint(AcGePoint3d((dPanelXLow - 87), (dPanelYLow - 121), 0));
-		pLine2->setEndPoint(AcGePoint3d((dPanelXLow + 223), (dPanelYLow - 121), 0));
-		pBTR->appendAcDbEntity(pLine2);
-		pLine2->close();
+		// three strips case
+		if (numStrips == 3 && panelOpenings.size() > 1)
+		{
+			auto leftOpening = panelOpenings[0];
+			auto rightOpening = panelOpenings[1];
 
-		AcDbLine* pLine3 = new AcDbLine();
-		pLine3->setStartPoint(AcGePoint3d((dPanelXLow + 223), (dPanelYLow - 121), 0));
-		pLine3->setEndPoint(AcGePoint3d((dPanelXLow + 223), (dPanelYLow + 71), 0));
-		pBTR->appendAcDbEntity(pLine3);
-		pLine3->close();
+			// sort the two openings based on x position
+			if (leftOpening.first.first > rightOpening.first.first)
+			{
+				leftOpening = panelOpenings[1];
+				rightOpening = panelOpenings[0];
+			}
 
-		AcDbLine* pLine4 = new AcDbLine();
-		pLine4->setStartPoint(AcGePoint3d((dPanelXLow - 87), (dPanelYLow - 42), 0));
-		pLine4->setEndPoint(AcGePoint3d((dPanelXLow + 223), (dPanelYLow - 42), 0));
-		pBTR->appendAcDbEntity(pLine4);
-		pLine4->close();
+			// Find a point between first opening and left panel bound
+			internalLeftMidPoint.first = (panelBounds.first.first + leftOpening.first.first) / 2;
+			internalLeftMidPoint.second = (leftOpening.first.second + leftOpening.second.second) / 2;
 
-		AcDbLine* pLine5 = new AcDbLine();
-		pLine5->setStartPoint(AcGePoint3d((dPanelXLow + 221), (dPanelYLow + 69), 0));
-		pLine5->setEndPoint(AcGePoint3d((dPanelXLow + 225), (dPanelYLow + 73), 0));
-		pBTR->appendAcDbEntity(pLine5);
-		pLine5->close();
-	}
-		break;
+			//Find a point between two openings. Pick Y co-ordinate based on the smallest opening
+			internalBottomMidPoint.first = (leftOpening.second.first + rightOpening.first.first) / 2;
+			if((leftOpening.second.second - leftOpening.first.second) > (rightOpening.second.second - rightOpening.first.second))
+				internalBottomMidPoint.second = (rightOpening.first.second + rightOpening.second.second) / 2;
+			else
+				internalBottomMidPoint.second = (leftOpening.first.second + leftOpening.second.second) / 2;
 
-	case 3:
-	{
-		AcDbLine* pLine1 = new AcDbLine();
-		pLine1->setStartPoint(AcGePoint3d((dPanelXLow + 403), (dPanelYLow + 95), 0));
-		pLine1->setEndPoint(AcGePoint3d((dPanelXLow + 403), (dPanelYLow + 414), 0));
-		pBTR->appendAcDbEntity(pLine1);
-		pLine1->close();
+			// Find a point between second opening and right panel bound
+			internalrightMidPoint.first = (panelBounds.second.first + rightOpening.second.first) / 2;
+			internalrightMidPoint.second = (rightOpening.first.second + rightOpening.second.second) / 2;
+		}
 
-		AcDbLine* pLine2 = new AcDbLine();
-		pLine2->setStartPoint(AcGePoint3d((dPanelXLow + 403), (dPanelYLow + 414), 0));
-		pLine2->setEndPoint(AcGePoint3d((dPanelXLow + 486), (dPanelYLow + 414), 0));
-		pBTR->appendAcDbEntity(pLine2);
-		pLine2->close();
+		// push two connect points ( left and right ) 
+		if (numStrips == 2)
+		{
+			connectPoints.push_back(AcGePoint3d(leftMidPoint.first, internalLeftMidPoint.second, 0));
+			internalConnectPoints.push_back(AcGePoint3d(internalLeftMidPoint.first, internalLeftMidPoint.second, 0));
 
-		AcDbLine* pLine3 = new AcDbLine();
-		pLine3->setStartPoint(AcGePoint3d((dPanelXLow + 486), (dPanelYLow + 414), 0));
-		pLine3->setEndPoint(AcGePoint3d((dPanelXLow + 486), (dPanelYLow + 95), 0));
-		pBTR->appendAcDbEntity(pLine3);
-		pLine3->close();
+			connectPoints.push_back(AcGePoint3d(rightMidPoint.first, internalrightMidPoint.second, 0));
+			internalConnectPoints.push_back(AcGePoint3d(internalrightMidPoint.first, internalrightMidPoint.second, 0));
+		}
 
-		AcDbLine* pLine4 = new AcDbLine();
-		pLine4->setStartPoint(AcGePoint3d((dPanelXLow + 486), (dPanelYLow + 95), 0));
-		pLine4->setEndPoint(AcGePoint3d((dPanelXLow + 301), (dPanelYLow + 95), 0));
-		pBTR->appendAcDbEntity(pLine4);
-		pLine4->close();
+		// push three connect points ( left, bottom and right )
+		if (numStrips == 3)
+		{
+			connectPoints.push_back(AcGePoint3d(leftMidPoint.first, internalLeftMidPoint.second, 0));
+			internalConnectPoints.push_back(AcGePoint3d(internalLeftMidPoint.first, internalLeftMidPoint.second, 0));
 
-		AcDbLine* pLine5 = new AcDbLine();
-		pLine5->setStartPoint(AcGePoint3d((dPanelXLow + 299), (dPanelYLow + 93), 0));
-		pLine5->setEndPoint(AcGePoint3d((dPanelXLow + 303), (dPanelYLow + 97), 0));
-		pBTR->appendAcDbEntity(pLine5);
-		pLine5->close();
-	}
-		break;
+			connectPoints.push_back(AcGePoint3d(internalBottomMidPoint.first, bottomMidPoint.second, 0));
+			internalConnectPoints.push_back(AcGePoint3d(internalBottomMidPoint.first, internalBottomMidPoint.second, 0));
 
-	default:
-		break;
+			connectPoints.push_back(AcGePoint3d(rightMidPoint.first, internalrightMidPoint.second, 0));
+			internalConnectPoints.push_back(AcGePoint3d(internalrightMidPoint.first, internalrightMidPoint.second, 0));
+		}
 	}
 }
 
-void RebarNotesHelper::ProcessRebars(vector<string> labels, vector<string> contents, int iLegNo, Panel& panel, vector<AcGePoint3d>& connectPoints)
+void RebarNotesHelper::PlaceBoxAndLines(int iLegNo, std::vector<AcGePoint3d>& connectPoints, std::vector<AcGePoint3d>& internalConnectPoints, AcDbBlockTableRecordPointer& pBTR)
 {
+	AcGePoint3d lineAnchorPoint = connectPoints[iLegNo - 1];
+	AcGePoint3d internalConnectPoint = internalConnectPoints[iLegNo - 1];
 
+	AcDbLine* interalConnectLine = new AcDbLine();
+	interalConnectLine->setStartPoint(internalConnectPoint - AcGeVector3d(5, 5, 0));
+	interalConnectLine->setEndPoint(internalConnectPoint + AcGeVector3d(5, 5, 0));
+	pBTR->appendAcDbEntity(interalConnectLine);
+	interalConnectLine->close();
+
+	// create line boxes for 2 strips 
+	if (connectPoints.size() == 2)
+	{
+		double xFarOffset = -10;
+		double xNearOffset = 60;
+		if (iLegNo == 2)
+		{
+			xFarOffset = 60;
+			xNearOffset = -10;
+		}
+		AcDbLine* iExternalConnectLine = new AcDbLine();
+		iExternalConnectLine->setStartPoint(internalConnectPoint);
+		iExternalConnectLine->setEndPoint(lineAnchorPoint + AcGeVector3d(xFarOffset, 0, 0));
+		pBTR->appendAcDbEntity(iExternalConnectLine);
+		iExternalConnectLine->close();
+
+		AcDbLine* outerVerticalLine = new AcDbLine();
+		outerVerticalLine->setStartPoint(lineAnchorPoint + AcGeVector3d(xFarOffset, 0, 0));
+		outerVerticalLine->setEndPoint(lineAnchorPoint + AcGeVector3d(xFarOffset, 300, 0));
+		pBTR->appendAcDbEntity(outerVerticalLine);
+		outerVerticalLine->close();
+
+		AcDbLine* innerVerticalLine = new AcDbLine();
+		innerVerticalLine->setStartPoint(lineAnchorPoint + AcGeVector3d(xNearOffset, 0, 0));
+		innerVerticalLine->setEndPoint(lineAnchorPoint + AcGeVector3d(xNearOffset, 300, 0));
+		pBTR->appendAcDbEntity(innerVerticalLine);
+		innerVerticalLine->close();
+
+		AcDbLine* closingHorizontalLine = new AcDbLine();
+		closingHorizontalLine->setStartPoint(lineAnchorPoint + AcGeVector3d(xNearOffset, 300, 0));
+		closingHorizontalLine->setEndPoint(lineAnchorPoint + AcGeVector3d(xFarOffset, 300, 0));
+		pBTR->appendAcDbEntity(closingHorizontalLine);
+		closingHorizontalLine->close();
+	}
+	// create line boxes for 3 strips
+	else if (connectPoints.size() == 3)
+	{
+		// left and right rebars
+		if (iLegNo == 1 || iLegNo == 3)
+		{
+			double xFarOffset = -10;
+			double xNearOffset = 60;
+			// change offsets for right rebar
+			if (iLegNo == 3)
+			{
+				xFarOffset = 60;
+				xNearOffset = -10;
+			}
+			AcDbLine* iExternalConnectLine = new AcDbLine();
+			iExternalConnectLine->setStartPoint(internalConnectPoint);
+			iExternalConnectLine->setEndPoint(lineAnchorPoint + AcGeVector3d(xFarOffset, 0, 0));
+			pBTR->appendAcDbEntity(iExternalConnectLine);
+			iExternalConnectLine->close();
+
+			AcDbLine* outerVerticalLine = new AcDbLine();
+			outerVerticalLine->setStartPoint(lineAnchorPoint + AcGeVector3d(xFarOffset, 0, 0));
+			outerVerticalLine->setEndPoint(lineAnchorPoint + AcGeVector3d(xFarOffset, 300, 0));
+			pBTR->appendAcDbEntity(outerVerticalLine);
+			outerVerticalLine->close();
+
+			AcDbLine* innerVerticalLine = new AcDbLine();
+			innerVerticalLine->setStartPoint(lineAnchorPoint + AcGeVector3d(xNearOffset, 0, 0));
+			innerVerticalLine->setEndPoint(lineAnchorPoint + AcGeVector3d(xNearOffset, 300, 0));
+			pBTR->appendAcDbEntity(innerVerticalLine);
+			innerVerticalLine->close();
+
+			AcDbLine* closingHorizontalLine = new AcDbLine();
+			closingHorizontalLine->setStartPoint(lineAnchorPoint + AcGeVector3d(xNearOffset, 300, 0));
+			closingHorizontalLine->setEndPoint(lineAnchorPoint + AcGeVector3d(xFarOffset, 300, 0));
+			pBTR->appendAcDbEntity(closingHorizontalLine);
+			closingHorizontalLine->close();
+		}
+		// bottom rebar
+		else if (iLegNo == 2)
+		{
+			double yFarOffset = -55;
+			double yNearOffset = 10;
+
+			AcDbLine* iExternalConnectLine = new AcDbLine();
+			iExternalConnectLine->setStartPoint(internalConnectPoint);
+			iExternalConnectLine->setEndPoint(lineAnchorPoint + AcGeVector3d(0, yFarOffset, 0));
+			pBTR->appendAcDbEntity(iExternalConnectLine);
+			iExternalConnectLine->close();
+
+			AcDbLine* outerVerticalLine = new AcDbLine();
+			outerVerticalLine->setStartPoint(lineAnchorPoint + AcGeVector3d(0, yFarOffset, 0));
+			outerVerticalLine->setEndPoint(lineAnchorPoint + AcGeVector3d(300, yFarOffset, 0));
+			pBTR->appendAcDbEntity(outerVerticalLine);
+			outerVerticalLine->close();
+
+			AcDbLine* innerVerticalLine = new AcDbLine();
+			innerVerticalLine->setStartPoint(lineAnchorPoint + AcGeVector3d(0, yNearOffset, 0));
+			innerVerticalLine->setEndPoint(lineAnchorPoint + AcGeVector3d(300, yNearOffset, 0));
+			pBTR->appendAcDbEntity(innerVerticalLine);
+			innerVerticalLine->close();
+
+			AcDbLine* closingHorizontalLine = new AcDbLine();
+			closingHorizontalLine->setStartPoint(lineAnchorPoint + AcGeVector3d(300, yFarOffset, 0));
+			closingHorizontalLine->setEndPoint(lineAnchorPoint + AcGeVector3d(300, yNearOffset, 0));
+			pBTR->appendAcDbEntity(closingHorizontalLine);
+			closingHorizontalLine->close();
+		}
+	}
+}
+
+void RebarNotesHelper::ProcessRebars(vector<string> labels, vector<string> contents, int iLegNo, Panel& panel, vector<AcGePoint3d>& connectPoints, std::vector<AcGePoint3d>& internalConnectPoints)
+{
+	AcGeVector3d labelOffset = AcGeVector3d(0,0,0);
 	AcDbDatabase* pDb = acdbHostApplicationServices()->workingDatabase();
 	AcDbBlockTableRecordPointer pBTR
 	(
 		acdbSymUtil()->blockModelSpaceId(pDb),
 		AcDb::kForWrite
 	);
+	
+	if (connectPoints.size() == 2)
+	{
+		labelOffset = AcGeVector3d(0, 15, 0);
+	}
+	else if (connectPoints.size() == 3)
+	{
+		if( iLegNo == 1 || iLegNo == 3)
+			labelOffset = AcGeVector3d(0, 15, 0);
+		else if (iLegNo == 2)
+			labelOffset = AcGeVector3d(15, 0, 0);
+	}
 
 
 	BOUNDS bPanelBounds = panel.getInternalPanelBounds();
@@ -352,7 +456,7 @@ void RebarNotesHelper::ProcessRebars(vector<string> labels, vector<string> conte
 			// Has both TOP and Bottom Reinforcement and Entered values are both greater than 0. subtract label text from given value and add it below
 
 			AcDbMText* mtext = new AcDbMText;
-			mtext->setLocation(connectPoints[iLegNo - 1]);
+			mtext->setLocation(connectPoints[iLegNo - 1] + labelOffset);
 			mtext->setTextHeight(6.0f);
 			mtext->setWidth(400);
 				
@@ -374,12 +478,12 @@ void RebarNotesHelper::ProcessRebars(vector<string> labels, vector<string> conte
 			mtext->setContents(widestr.c_str());
 
 			// Labels are to be rotated only if the labels are on side
-			if (iLegNo != 2)
+			if (iLegNo != 2 || connectPoints.size() == 2)
 				mtext->setRotation(1.5707);
 			pBTR->appendAcDbEntity(mtext);
 			mtext->close();
 
-			PlaceBoxAndLines(iLegNo, dPanelXLow, dPanelYLow, pBTR);
+			PlaceBoxAndLines(iLegNo, connectPoints,internalConnectPoints, pBTR);
 		}
 		else if (iDiff1 <= 0 && iDiff2 <= 0)
 		{
@@ -387,7 +491,7 @@ void RebarNotesHelper::ProcessRebars(vector<string> labels, vector<string> conte
 			// No Additional reinforcement required
 
 			AcDbMText* mtext = new AcDbMText;
-			mtext->setLocation(AcGePoint3d((dPanelXLow - 198), (dPanelYLow + 108), 0));
+			mtext->setLocation(connectPoints[iLegNo - 1] + labelOffset);
 			mtext->setTextHeight(6.0f);
 			mtext->setWidth(400);
 			
@@ -404,11 +508,11 @@ void RebarNotesHelper::ProcessRebars(vector<string> labels, vector<string> conte
 
 			mtext->setContents(widestr.c_str());
 
-			if (iLegNo != 2)
+			if (iLegNo != 2 || connectPoints.size() == 2)
 				mtext->setRotation(1.5707);;
 			pBTR->appendAcDbEntity(mtext);
 
-			PlaceBoxAndLines(iLegNo, dPanelXLow, dPanelYLow, pBTR);
+			PlaceBoxAndLines(iLegNo, connectPoints,internalConnectPoints, pBTR);
 
 			mtext->close();
 
@@ -436,14 +540,13 @@ void RebarNotesHelper::ProcessRebars(vector<string> labels, vector<string> conte
 		{
 
 			AcDbMText* mtext = new AcDbMText;
-			mtext->setLocation(connectPoints[iLegNo - 1]);
+			mtext->setLocation(connectPoints[iLegNo - 1] + labelOffset);
 			mtext->setTextHeight(6.0f);
 			mtext->setWidth(400);
 
 			std::string tempString = "              MIN REINFORCEMENT REQUIRED FOR LIFTING\n";
 			tempString += labels[0];
-			tempString += " \n";
-			tempString += "                   ------------------------------------------------------------------------ \n";
+			tempString += "                   ------------------------------------------------- \n";
 			tempString += "       USE (" + to_string(iDiff1) + ")-#";
 			tempString += labels[0].substr(5, 1);
 			tempString += "'s";
@@ -463,12 +566,12 @@ void RebarNotesHelper::ProcessRebars(vector<string> labels, vector<string> conte
 			mtext->setContents(widestr.c_str());
 
 			// Labels are to be rotated only if the labels are on side
-			if (iLegNo != 2)
+			if (iLegNo != 2 || connectPoints.size() == 2)
 				mtext->setRotation(1.5707);
 			pBTR->appendAcDbEntity(mtext);
 			mtext->close();
 
-			PlaceBoxAndLines(iLegNo, dPanelXLow, dPanelYLow, pBTR);
+			PlaceBoxAndLines(iLegNo, connectPoints, internalConnectPoints,pBTR);
 		}
 		else if (iDiff1 <= 0 )
 		{
@@ -476,27 +579,26 @@ void RebarNotesHelper::ProcessRebars(vector<string> labels, vector<string> conte
 			// No Additional reinforcement required
 
 			AcDbMText* mtext = new AcDbMText;
-			mtext->setLocation(AcGePoint3d((dPanelXLow - 198), (dPanelYLow + 108), 0));
+			mtext->setLocation(connectPoints[iLegNo - 1] + labelOffset);
 			mtext->setTextHeight(6.0f);
 			mtext->setWidth(400);
 
 
 			std::string tempString = "              MIN REINFORCEMENT REQUIRED FOR LIFTING\n";
 			tempString += labels[0];
-			tempString += " \n";
-			tempString += "                   ------------------------------------------------------------------------ \n";
+			tempString += "                   ------------------------------------------------- \n";
 			tempString += "  NO ADDITIONAL REINFORCEMENT REQUIRED PER STRUCTURAL DRAWINGS \n";
 			tempString += "                      CONTRACTOR TO VERIFY \n";
 			std::wstring widestr = std::wstring(tempString.begin(), tempString.end());
 
 			mtext->setContents(widestr.c_str());
 
-			if (iLegNo != 2)
+			if (iLegNo != 2 || connectPoints.size() == 2)
 				mtext->setRotation(1.5707);
 
 			pBTR->appendAcDbEntity(mtext);
 
-			PlaceBoxAndLines(iLegNo, dPanelXLow, dPanelYLow, pBTR);
+			PlaceBoxAndLines(iLegNo, connectPoints,internalConnectPoints, pBTR);
 
 			mtext->close();
 
