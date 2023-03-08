@@ -880,6 +880,13 @@ void Panel::updateFFYPosition()
 		mInternalPanelBounds.first = vecInteralPanelLines[1];
 		mInternalPanelBounds.second = vecInteralPanelLines[vecInteralPanelLines.size() - 2];
 
+		std::sort(vecInteralPanelLines.begin(), vecInteralPanelLines.end(), [](const COORDINATES& point1, const COORDINATES& point2) {
+					return point1.second < point2.second; // sort all the panel points based on Y co-ordinate
+			});
+
+		mInternalPanelBounds.first.second = vecInteralPanelLines[0].second;  // lowest panel Y position 
+		mInternalPanelBounds.second.second = vecInteralPanelLines[vecInteralPanelLines.size() - 1].second;  //highest panel Y position
+
 		if (Utilities::getUtils()->isNullBound(mInternalPanelBounds) && Utilities::getUtils()->isBoundWidthGreater(tempBounds,mInternalPanelBounds))
 		{
 			mInternalPanelBounds = tempBounds;
