@@ -865,20 +865,19 @@ void Panel::updateFFYPosition()
 	// logic for broken panels
 	else
 	{
-
+		// sort all the points based on X cordinates first
 		std::sort(vecInteralPanelLines.begin(), vecInteralPanelLines.end(), [](const COORDINATES& point1, const COORDINATES& point2) {
-			if (Utilities::getUtils()->approximatelyEqual(point1.first, point2.first))
-				return point1.second < point2.second;
 			return point1.first < point2.first;
 			});
 
+		// remove the duplicate points ( this might not be needed at all, keeping it anyway)
 		vecInteralPanelLines.erase(std::unique(vecInteralPanelLines.begin(), vecInteralPanelLines.end()), vecInteralPanelLines.end());
 
 		panelFFYPosition = vecInteralPanelLines[0].second;
 
 		BOUNDS tempBounds;
-		mInternalPanelBounds.first = vecInteralPanelLines[1];
-		mInternalPanelBounds.second = vecInteralPanelLines[vecInteralPanelLines.size() - 2];
+		mInternalPanelBounds.first = vecInteralPanelLines[1]; // second lowest x point
+		mInternalPanelBounds.second = vecInteralPanelLines[vecInteralPanelLines.size() - 2]; // seccond highest x point
 
 		std::sort(vecInteralPanelLines.begin(), vecInteralPanelLines.end(), [](const COORDINATES& point1, const COORDINATES& point2) {
 					return point1.second < point2.second; // sort all the panel points based on Y co-ordinate
