@@ -56,7 +56,18 @@ void Panel::addEdgeLift(CIRCLE& edgeLift)
 
 void Panel::addBraceInsert(COORDINATES &braceInsert)
 {
-	vecBraceInserts.push_back(braceInsert);
+	bool bFound = false;
+	for (auto& insert : vecBraceInserts)
+	{
+		if (insert == braceInsert)
+		{
+			bFound = true;
+			break;
+		}
+	}
+	
+	if(!bFound)
+		vecBraceInserts.push_back(braceInsert);
 }
 
 void Panel::addReveal(BOUNDS& reveal)
