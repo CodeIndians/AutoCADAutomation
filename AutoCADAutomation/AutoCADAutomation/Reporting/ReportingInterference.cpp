@@ -44,7 +44,7 @@ void ReportingInterference::UpdateExcelDataFromPanel(ExcelSchema& excelObject, P
 ReportingInterference::ReportingInterference(std::list<Panel>& vecPanels)
 {
 	mPanels = vecPanels;
-	auto location = fileLocation + drawingName + "_Interference_" + currentTime() + ".csv";
+	auto location = fileLocation + drawingName + "_Inserts_Collision_" + currentTime() + ".csv";
 	csvfile.open(location, std::ios_base::app);
 	InitializeHeader();
 }

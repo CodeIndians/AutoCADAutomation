@@ -850,7 +850,8 @@ void Panel::detectInterferenceCheck()
 		for (auto& liftInsert : vecLiftInserts)
 		{
 			auto diff = std::abs(liftInsert.first.first - braceX);
-			if (diff < 12.0f && !Utilities::getUtils()->approximatelyEqual(diff,12.0))
+			//1/8th inch precison check while checking the condition
+			if(diff <= 11.875)
 			{
 				bHasInterferenceInInserts = true;
 				break;
