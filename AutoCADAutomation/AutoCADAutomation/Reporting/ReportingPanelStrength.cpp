@@ -64,18 +64,18 @@ void ReportingPanelStrength::UpdateExcelDataFromPanel(ExcelSchema& excelObject, 
 					bWeakPanel = true;
 					break;
 				}
-			}
-			
-			// compute the opening with 1 feet extended side 
-			BOUNDS oneFeetExtendedBound = opening;
-			oneFeetExtendedBound.first.first -= 12;
-			oneFeetExtendedBound.second.first += 12;
-			oneFeetExtendedBound.second.second += 12;
 
-			if (m_utils->boundCheck(oneFeetExtendedBound, cgPoint))
-			{
-				bWeakPanel = true;
-				break;
+				// compute the opening with 1 feet extended side 
+				BOUNDS oneFeetExtendedBound = opening;
+				oneFeetExtendedBound.first.first -= 12;
+				oneFeetExtendedBound.second.first += 12;
+				oneFeetExtendedBound.second.second += 12;
+
+				if (m_utils->boundCheck(oneFeetExtendedBound, cgPoint))
+				{
+					bWeakPanel = true;
+					break;
+				}
 			}
 		}
 	}
