@@ -94,7 +94,10 @@ void PanelBuilder::buildLabels(std::list<LABELTEXT>& textLabels)
 			}
 			else
 			{
-				ptrPanel->addPanelLabels(textLabel);
+				// check only the panel bound for adding the panel labels
+				auto panelBound = ptrPanel->getPanelBounds();
+				if(Utilities::getUtils()->boundCheck(panelBound, textLabel.second))
+					ptrPanel->addPanelLabels(textLabel);
 			}
 		}
 		// collect detail labels
