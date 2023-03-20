@@ -56,14 +56,17 @@ void ReportingInsertClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObject
 	// Get the Inserts coordinated based on type
 	if (m_InsertType == "LIFT_INSERTS")
 	{
+		// collect only lift inserts
 		for (auto& liftInserts : panel.vecLiftInserts)
 		{
 			vecInsertCoordinates.push_back(liftInserts.first);
 		}
-		for (auto& liftInserts : panel.vecEdgeLifts)
+
+		//Dont collect edge lifts 
+		/*for (auto& liftInserts : panel.vecEdgeLifts)
 		{
 			vecInsertCoordinates.push_back(liftInserts.first);
-		}
+		}*/
 	}
 	else
 	{
@@ -143,8 +146,9 @@ void ReportingInsertClearance::UpdateExcelDataFromPanel(ExcelSchema& excelObject
 ReportingInsertClearance::ReportingInsertClearance(std::list<Panel>& vecPanels , std::string strInsertType, int Panelclearance, int OpeningClearance)
 {
 	m_InsertType = strInsertType;
-	m_PanelClearance = Panelclearance;
-	m_OpeningClearance = OpeningClearance;
+	m_PanelClearance = (double)Panelclearance - 0.124f;
+	m_OpeningClearance = (double)OpeningClearance - 0.124f;
+	
 
 	m_utils = Utilities::getUtils();
 	mPanels = vecPanels;

@@ -34,8 +34,8 @@ protected:
 	void UpdateExcelDataFromPanel(ExcelSchema& excelObject, Panel& panel);
 	Utilities* m_utils;
 	std::string m_InsertType;
-	int m_PanelClearance;
-	int m_OpeningClearance;
+	double m_PanelClearance;
+	double m_OpeningClearance;
 
 public:
 	explicit ReportingInsertClearance(std::list<Panel>& vecPanels , std::string strInsertType, int Panelclearance, int OpeningClearance);
