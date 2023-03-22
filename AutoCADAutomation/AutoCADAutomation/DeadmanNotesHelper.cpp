@@ -50,7 +50,6 @@ void DeadmanNotesHelper::PlaceLabels()
 		if (panel.vecEdgeLifts.size() > 0 && panel.vecLiftInserts.size() > 1)
 		{
  			AcDbMText* mtext = new AcDbMText;
-			//mtext->setLocation(AcGePoint3d((dPanelXLow - 222), (dPanelYHigh + 105), 0));
 			mtext->setTextHeight(6.0f);
 			mtext->setWidth(110);
 			mtext->setContents(L"{\\LFOR PLUMBSET ONLY\\P\\lP92P 8T x 13.25' EDGE LIFT INSERT WITH #6 TENSION BAR. SEE GENERAL NOTES FOR CORRECT TENSION BAR INSTALLATION }");
@@ -58,7 +57,6 @@ void DeadmanNotesHelper::PlaceLabels()
 			int leaderLineIndex;
 
 			AcDbMLeader* leader = new AcDbMLeader;
-			AcDbObjectId dimStyleId = pDb->dimstyle();
 
 			auto lowPoint = AcGePoint3d(liftInsertXPosition, (dPanelYHigh), 0);
 			auto highPoint = AcGePoint3d((dPanelXLow - 25), (dPanelYHigh + 100), 0);
@@ -158,21 +156,23 @@ void DeadmanNotesHelper::PlaceLabels()
 			if (bWedgeFreePanel)
 			{
 				AcDbMText* mtext = new AcDbMText;
-				mtext->setLocation(AcGePoint3d((dPanelXLow - 133), (dPanelYHigh + 42), 0));
+				//mtext->setLocation(AcGePoint3d((dPanelXLow - 133), (dPanelYHigh + 42), 0));
 				mtext->setTextHeight(6.0f);
 				mtext->setContents(L"WEDGE PANEL FREE");
 
-				pBTR->appendAcDbEntity(mtext);
+				AcDbMLeader* leader = new AcDbMLeader;
+				int leaderLineIndex;
 
-				AcDbLeader* leader = new AcDbLeader;
-				AcDbObjectId dimStyleId = pDb->dimstyle();
+				auto lowPoint = AcGePoint3d(bPanelBounds.first.first, dPanelYHigh, 0);
+				auto highPoint = AcGePoint3d((dPanelXLow - 25), (dPanelYHigh + 100), 0);
 
-				leader->appendVertex(AcGePoint3d((dPanelXLow + 20), (dPanelYHigh), 0));
-				leader->appendVertex(AcGePoint3d((dPanelXLow - 40), (dPanelYHigh + 38), 0));
-				leader->appendVertex(AcGePoint3d((dPanelXLow - 45), (dPanelYHigh + 38), 0));
+				leader->addLeaderLine(lowPoint, leaderLineIndex);
+				leader->addLastVertex(leaderLineIndex, highPoint);
 
-				leader->setAnnotationObjId(mtext->objectId());
-				leader->setDimensionStyle(dimStyleId);
+				leader->setArrowSize(10.0f);
+				
+				leader->setMText(mtext);
+				
 				pBTR->appendAcDbEntity(leader);
 
 				leader->close();
