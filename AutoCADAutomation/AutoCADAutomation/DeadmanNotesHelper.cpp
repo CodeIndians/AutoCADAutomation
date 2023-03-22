@@ -7,6 +7,7 @@
 */
 
 #include "DeadmanNotesHelper.h"
+#include "dbmleader.h"
 
 DeadmanNotesHelper::DeadmanNotesHelper(std::list<Panel>& vecPanels)
 {
@@ -31,29 +32,43 @@ void DeadmanNotesHelper::PlaceLabels()
 		);
 
 		BOUNDS bPanelBounds = panel.getInternalPanelBounds();
-		double dPanelXLow = bPanelBounds.first.first;
+		BOUNDS bDefPointBOunds = panel.getPanelBounds();
+		double dPanelXLow = bDefPointBOunds.first.first + 885.0f;
 		double dPanelYHigh = bPanelBounds.second.second;
 
+		// lift insert position is set to the right most panel position first
+		double liftInsertXPosition = bPanelBounds.second.first;
+
+		// left most lift insert position is captured
+		for (auto& insert : panel.vecEdgeLifts)
+		{
+			if (liftInsertXPosition > insert.first.first)
+				liftInsertXPosition = insert.first.first;
+		}
+		
 		// Condition- 1 For panels having both edge lift and face lift 
 		if (panel.vecEdgeLifts.size() > 0 && panel.vecLiftInserts.size() > 1)
 		{
  			AcDbMText* mtext = new AcDbMText;
-			mtext->setLocation(AcGePoint3d((dPanelXLow - 122), (dPanelYHigh + 105), 0));
+			//mtext->setLocation(AcGePoint3d((dPanelXLow - 222), (dPanelYHigh + 105), 0));
 			mtext->setTextHeight(6.0f);
-			mtext->setWidth(96);
-			mtext->setContents(L"{\\LFOR PLUMBSET ONLY\\P\\lP92P 8T x 13.25' EDGE LIFT INSERT WITH #6 TENSION BAR. SEE GENERAL NOTES FOR CORECT TENSION BAR INSTALLATION }");
+			mtext->setWidth(110);
+			mtext->setContents(L"{\\LFOR PLUMBSET ONLY\\P\\lP92P 8T x 13.25' EDGE LIFT INSERT WITH #6 TENSION BAR. SEE GENERAL NOTES FOR CORRECT TENSION BAR INSTALLATION }");
 
-			pBTR->appendAcDbEntity(mtext);
+			int leaderLineIndex;
 
-			AcDbLeader* leader = new AcDbLeader;
+			AcDbMLeader* leader = new AcDbMLeader;
 			AcDbObjectId dimStyleId = pDb->dimstyle();
 
-			leader->appendVertex(AcGePoint3d((dPanelXLow + 42), (dPanelYHigh), 0));
-			leader->appendVertex(AcGePoint3d((dPanelXLow - 12), (dPanelYHigh + 100), 0));
-			leader->appendVertex(AcGePoint3d((dPanelXLow - 25), (dPanelYHigh + 100), 0));
+			auto lowPoint = AcGePoint3d(liftInsertXPosition, (dPanelYHigh), 0);
+			auto highPoint = AcGePoint3d((dPanelXLow - 25), (dPanelYHigh + 100), 0);
+			
+			leader->addLeaderLine(lowPoint, leaderLineIndex);
+			leader->addLastVertex(leaderLineIndex, highPoint);
 
-			leader->setAnnotationObjId(mtext->objectId());
-			leader->setDimensionStyle(dimStyleId);
+			leader->setArrowSize(10.0f);
+
+			leader->setMText(mtext);
 			pBTR->appendAcDbEntity(leader);
 
 			leader->close();
