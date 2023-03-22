@@ -190,24 +190,24 @@ void DeadmanNotesHelper::PlaceLabels()
 				if ((abs(opening.first.second - dPanelLowY) <= 5) && (abs(opening.first.second - dPanelLowY) > 0))
 				{
 					AcDbMText* mtext = new AcDbMText;
-					mtext->setLocation(AcGePoint3d((dPanelXLow + 230), (dPanelLowY - 80), 0));
+					//mtext->setLocation(AcGePoint3d((dPanelXLow + 230), (dPanelLowY - 80), 0));
 					mtext->setTextHeight(6.0f);
 					mtext->setWidth(135);
 					mtext->setContents(L"\\LNOTE:\\P\\lDAYTON SUPERIOR CORP. IS NOT RESPONSIBLE FOR ANY CRACKING ADJACENT OR TO THE OPENING AS SHOWN(TYP.)");
 
-					pBTR->appendAcDbEntity(mtext);
+					int leaderLineIndex;
+					AcDbMLeader* leader = new AcDbMLeader;
 
-					AcDbLeader* leader = new AcDbLeader;
-					AcDbObjectId dimStyleId = pDb->dimstyle();
+					auto lowPoint = AcGePoint3d(opening.first.first, opening.second.second, 0);
+					auto highPoint = AcGePoint3d((dPanelXLow - 25), (dPanelYHigh + 100), 0);
 
-					leader->appendVertex(AcGePoint3d((dPanelXLow + 150), (dPanelLowY), 0));
-					leader->appendVertex(AcGePoint3d((dPanelXLow + 220), (dPanelLowY - 100), 0));
-					leader->appendVertex(AcGePoint3d((dPanelXLow + 225), (dPanelLowY - 100), 0));
+					leader->addLeaderLine(lowPoint, leaderLineIndex);
+					leader->addLastVertex(leaderLineIndex, highPoint);
 
-					leader->setAnnotationObjId(mtext->objectId());
-					leader->setDimensionStyle(dimStyleId);
+					leader->setArrowSize(10.0f);
+
+					leader->setMText(mtext);
 	
-
 					pBTR->appendAcDbEntity(leader);
 
 					leader->close();
