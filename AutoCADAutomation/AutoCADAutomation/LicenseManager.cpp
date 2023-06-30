@@ -11,6 +11,15 @@
 
 #include "LicenseManager.h"
 #include <sstream>
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#include "json.hpp"
+#include <iostream>
+
+#pragma comment(lib, "ws2_32.lib")
+
+using json = nlohmann::json;
+
 
 using namespace std;
 LicenseManager::LicenseManager()
@@ -19,118 +28,152 @@ LicenseManager::LicenseManager()
 
 bool LicenseManager::isValidLicense()
 {
+    bool isValidLicense = false;
+    try
+    {
+        // Initialize Winsock
+        WSADATA wsaData;
+        if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+        {
+            std::cerr << "WSAStartup failed" << std::endl;
+            return 1;
+        }
 
-	// Get the allowed time from the license file
-	TCHAR szPath[MAX_PATH];
+        // Set the server's IP address and port number
+        std::string serverIp = "192.168.29.10";
+        int serverPort = 8080;
 
-	if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szPath)))
-	{
-		PathAppend(szPath, _T("\\Autodesk\\AutoCAD 2021\\R24.0\\enu\\Support\\License.ini"));
-	}
-	std::ifstream myfile(szPath);
-	std::ofstream outFile;
-	string line;
-	int base = 10;
-	char* end;
-	_bstr_t b(szPath);
-	long long  millisec_since_epoch;
-	long long savedTime;
+        // Create a TCP socket
+        SOCKET clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+        if (clientSocket == INVALID_SOCKET)
+        {
+            std::cerr << "Error creating socket: " << WSAGetLastError() << std::endl;
+            WSACleanup();
+            return 1;
+        }
 
-	if (myfile.is_open()) {
-		getline(myfile, line);
-		myfile.close();
-	}
-	else
-	{
-		return false;
-	}
+        // Connect to the server
+        struct addrinfo* result = NULL;
+        struct addrinfo hints;
+        memset(&hints, 0, sizeof(hints));
+        hints.ai_family = AF_INET;
+        hints.ai_socktype = SOCK_STREAM;
+        hints.ai_protocol = IPPROTO_TCP;
 
-	string strTime = line.substr(0, line.find("-"));
-	savedTime = strtoll(strTime.c_str(), &end, base);
-	
-	// Get the current time
-	time_t seconds_past_epoch = time(0); // current time
-	std::stringstream sstr;
-	sstr << seconds_past_epoch;
-	long long currentTime = strtoll(sstr.str().c_str(), &end, base);
+        if (getaddrinfo(serverIp.c_str(), std::to_string(serverPort).c_str(), &hints, &result) != 0)
+        {
+            std::cerr << "Error resolving server address" << std::endl;
+            closesocket(clientSocket);
+            WSACleanup();
+            return 1;
+        }
 
-	// Get Saved Mac addresss
-	int nPos = line.find("-");
-	string strEncryptedmac = line.substr(nPos + 1, (line.length() -  nPos));
-	string strDecryptepdMac = DecryptMacID(strEncryptedmac);
+        if (connect(clientSocket, result->ai_addr, static_cast<int>(result->ai_addrlen)) == SOCKET_ERROR)
+        {
+            std::cerr << "Error connecting to server: " << WSAGetLastError() << std::endl;
+            closesocket(clientSocket);
+            freeaddrinfo(result);
+            WSACleanup();
+            return 1;
+        }
 
-	// Get actual mac address
-	string strCmd = "getmac";
-	string strFilename = "macaddress.txt";
-	string strMacID;
+        std::cout << "Connected to server " << serverIp << ":" << serverPort << std::endl;
 
-	system((strCmd + ">" + strFilename).c_str());
-	string line1;
+        // Create the request model
+        RequestModel request;
+        request.HostName = getenv("COMPUTERNAME");
+        request.IPAddress = GetLocalIPAddress();
+        request.ProductName = "Auto Revit 2022";
 
-	std::ifstream myfile1("macaddress.txt");
+        // Serialize the request model to JSON
+        json jsonRequest = {
+            {"HostName", request.HostName},
+            {"IPAddress", request.IPAddress},
+            {"ProductName", request.ProductName}
+        };
 
-	int i = 0;
-	if (myfile1.is_open()) {
-		while (getline(myfile1, line1)) {
-			if (i == 3)
-			{
-				strMacID = line1.substr(0, 17);
-				break;
-			}
-			i++;
-		}
-		myfile1.close();
-	}
-	DeleteFileA("macaddress.txt");
+        std::string jsonString = jsonRequest.dump();
 
-	if ((strcmp(strMacID.c_str(), strDecryptepdMac.c_str()) == 0) && (savedTime > currentTime))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+        // Send the request to the server
+        if (send(clientSocket, jsonString.c_str(), static_cast<int>(jsonString.length()), 0) == SOCKET_ERROR)
+        {
+            std::cerr << "Error sending request to server: " << WSAGetLastError() << std::endl;
+            closesocket(clientSocket);
+            WSACleanup();
+            return 1;
+        }
+        std::cout << "Sent: " << jsonString << std::endl;
 
+        // Receive the response from the server
+        char buffer[1024];
+        memset(buffer, 0, sizeof(buffer));
+        int bytesRead = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+        if (bytesRead == SOCKET_ERROR)
+        {
+            std::cerr << "Error receiving response from server: " << WSAGetLastError() << std::endl;
+            closesocket(clientSocket);
+            WSACleanup();
+            return 1;
+        }
+
+        std::string jsonResponse(buffer, bytesRead);
+
+        // Deserialize the response JSON to the response model
+        json jsonResponseObj = json::parse(jsonResponse);
+
+        ResponseModel responseObject;
+        responseObject.ValidLicense = jsonResponseObj["ValidLicense"].get<bool>();
+
+        // Process the response
+        std::cout << "Received: License Status=" << std::boolalpha << responseObject.ValidLicense << std::endl;
+
+        // Close the socket
+        closesocket(clientSocket);
+
+        // Cleanup Winsock
+        WSACleanup();
+
+        isValidLicense = responseObject.ValidLicense;
+    }
+    catch (const std::exception& ex)
+    {
+        std::cerr << "Error occurred: " << ex.what() << std::endl;
+    }
+    return isValidLicense;
 }
 
-std::string LicenseManager::DecryptMacID(std::string strKey)
+std::string LicenseManager::GetLocalIPAddress()
 {
-	// License is of the form xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx-xxxxxxxx
-	// iterate 4 characters each and then
-
-	std::map<std::string, std::string> licenseMap;
-	licenseMap["qwe1"] = "0";
-	licenseMap["-"] = "-";
-	licenseMap["wer2"] = "1";
-	licenseMap["ert3"] = "2";
-	licenseMap["rty4"] = "3";
-	licenseMap["tyu5"] = "4";
-	licenseMap["yui6"] = "5";
-	licenseMap["uio7"] = "6";
-	licenseMap["iop8"] = "7";
-	licenseMap["opa9"] = "8";
-	licenseMap["pas0"] = "9";
-	licenseMap["1QAZ"] = "A";
-	licenseMap["2WSX"] = "B";
-	licenseMap["3EDC"] = "C";
-	licenseMap["4RFV"] = "D";
-	licenseMap["5TGB"] = "E";
-	licenseMap["6YHN"] = "F";
-
-	string retString;
-	int j = 1;
-	for (int i = 0; i < strKey.length(); i += 4)
+	WSADATA wsaData;
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
 	{
-		if (j == 3)
-		{
-			retString += "-";
-			j = 1;
-			i -= 3;
-			continue;
-		}
-		retString += licenseMap[ strKey.substr(i, 4)];
-		j++;
+		return "";
 	}
-	return retString;
+
+	char hostName[256];
+	if (gethostname(hostName, sizeof(hostName)) != 0)
+	{
+		return "";
+	}
+
+	struct addrinfo* result = NULL;
+	struct addrinfo hints;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_protocol = IPPROTO_TCP;
+
+	if (getaddrinfo(hostName, NULL, &hints, &result) != 0)
+	{
+		return "";
+	}
+
+	char ip[INET_ADDRSTRLEN];
+	sockaddr_in* addr = reinterpret_cast<sockaddr_in*>(result->ai_addr);
+	inet_ntop(AF_INET, &(addr->sin_addr), ip, INET_ADDRSTRLEN);
+
+	freeaddrinfo(result);
+	WSACleanup();
+	return ip;
 }
+

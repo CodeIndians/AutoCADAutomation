@@ -9,20 +9,27 @@
  */
 
 #pragma once
-#include<map>
-#include<string>
-#include <fstream>
-#include <tchar.h>
-#include <shlwapi.h>
-#pragma comment(lib,"shlwapi.lib")
-#include "shlobj.h"
-#include <comdef.h>
+#include <string>
+
 
 class LicenseManager
 {
 public:
+    // Define the Request model
+    struct RequestModel
+    {
+        std::string HostName;
+        std::string IPAddress;
+        std::string ProductName;
+    };
+
+    // Define the Response model
+    struct ResponseModel
+    {
+        bool ValidLicense;
+    };
 	LicenseManager();
 	static bool isValidLicense();
-	static std::string DecryptMacID(std::string strKey);
+    static std::string GetLocalIPAddress();
 private:
 };
