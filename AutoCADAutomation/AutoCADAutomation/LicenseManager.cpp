@@ -83,7 +83,7 @@ bool LicenseManager::isValidLicense()
         RequestModel request;
         request.HostName = getenv("COMPUTERNAME");
         request.IPAddress = GetLocalIPAddress();
-        request.ProductName = "Auto Revit 2022";
+        request.ProductName = "Auto CAD 2022";
 
         // Serialize the request model to JSON
         json jsonRequest = {
